@@ -6,7 +6,7 @@ import RegisterPage from "./components/auth/register";
 
 import AdminDashboard from "./components/admin/AdminDashboard";
 import ProductList from "./components/admin/ProductList";
-import AddProduct from "./components/admin/CreateProduct";
+import CreateProduct from "./components/admin/CreateProduct";
 import UpdateProduct from "./components/admin/UpdateProduct";
 import DeleteProduct from "./components/admin/DeleteProduct";
 
@@ -25,7 +25,7 @@ function App() {
           <Route index element={<ProductList />} />
 
           <Route path="products" element={<ProductList />} />
-          <Route path="products/add" element={<AddProduct />} />
+          <Route path="products/create" element={<CreateProduct />} />
           <Route path="products/update/:id" element={<UpdateProduct />} />
           <Route path="products/delete/:id" element={<DeleteProduct />} />
         </Route>

@@ -34,10 +34,6 @@ export default function AdminSidebar() {
             <List size={17} />
             Read Products
           </NavLink>
-          <NavLink to="/admin/products/add" className={navItemClass}>
-            <PlusCircle size={17} />
-            Add Product
-          </NavLink>
         </nav>
 
         <div className="border-t border-stone-200 p-4">

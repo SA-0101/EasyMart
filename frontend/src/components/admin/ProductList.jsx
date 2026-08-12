@@ -150,7 +150,7 @@ export default function ProductList() {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() =>
-                              navigate(`/admin/products/${id}/edit`)
+                              navigate(`/admin/products/update/${id}`)
                             }
                             className="rounded-md p-2 text-stone-500 transition-colors hover:bg-stone-100 hover:text-emerald-700"
                             title="Update product"

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, AlertTriangle } from "lucide-react";
 
 export default function UpdateProduct() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams(); // pulled automatically from the route "/admin/products/update/:id"
 
   const [form, setForm] = useState({
     name: "",
@@ -18,7 +18,16 @@ export default function UpdateProduct() {
 
   const token = localStorage.getItem("accessToken");
 
+  // Guard: if this page is opened without an :id in the URL, don't attempt any fetch at all
   useEffect(() => {
+    if (!id) {
+      setError(
+        "No product selected to update. Go back and pick a product from the list.",
+      );
+      setFetching(false);
+      return;
+    }
+
     const fetchProduct = async () => {
       try {
         setFetching(true);
@@ -50,8 +59,23 @@ export default function UpdateProduct() {
     e.preventDefault();
     setError(null);
 
-    if (!form.name || !form.price) {
-      setError("Name and price are required.");
+    if (!id) {
+      setError("No product selected to update.");
+      return;
+    }
+
+    // Build a partial payload — only include fields the user actually filled in.
+    // This matches a real PATCH: untouched fields are left alone on the backend,
+    // instead of forcing name/price to always be required on the frontend.
+    const payload = {};
+    if (form.name.trim() !== "") payload.name = form.name;
+    if (form.description.trim() !== "") payload.description = form.description;
+    if (form.image.trim() !== "") payload.image = form.image;
+    if (form.price !== "" && form.price !== null)
+      payload.price = Number(form.price);
+
+    if (Object.keys(payload).length === 0) {
+      setError("Change at least one field before saving.");
       return;
     }
 
@@ -63,10 +87,7 @@ export default function UpdateProduct() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...form,
-          price: Number(form.price),
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -94,7 +115,7 @@ export default function UpdateProduct() {
         Update Product
       </h1>
       <p className="mb-6 text-sm text-stone-500">
-        Edit the details of this product.
+        Edit only the fields you want to change — the rest stay as they are.
       </p>
 
       {fetching && (
@@ -104,7 +125,14 @@ export default function UpdateProduct() {
         </div>
       )}
 
-      {!fetching && (
+      {!fetching && !id && (
+        <div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          <AlertTriangle size={16} className="shrink-0" />
+          {error}
+        </div>
+      )}
+
+      {!fetching && id && (
         <>
           {error && (
             <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
