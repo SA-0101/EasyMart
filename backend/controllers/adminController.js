@@ -1,4 +1,6 @@
 const pool = require("../db/db");
+const bcrypt = require("bcrypt");
+
 const createProduct = async (req, res) => {
   const { name, description, image, price } = req.body;
   console.log(name, description, image, price);
@@ -36,4 +38,42 @@ const deleteProduct = async (req, res) => {
   res.json(result.rows[0]);
 };
 
-module.exports = { createProduct, getProducts, updateProduct, deleteProduct };
+const registerAdmin = async (req, res) => {
+  try {
+    const { username, email, password, role } = req.body;
+    if (!username || !email || !password || !role) {
+      return res.status(401).json({ err: "all fields required" });
+    }
+
+    if (role !== "admin") {
+      return res.status(401).json({ message: "Invalid role" });
+    }
+
+    // console.log(username, email, hash_pass, role);
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email=$1 AND role=$2",
+      [email, role],
+    );
+    if (result.rows.length != 0) {
+      return res.status(200).json({ message: "already registered" });
+    }
+    const hash_pass = await bcrypt.hash(password, 10);
+
+    const user = await pool.query(
+      "INSERT INTO users (username,email,password,role) VALUES($1,$2,$3,$4) RETURNING *",
+      [username, email, hash_pass, role],
+    );
+    console.log("user is ", user);
+    res.send(user.rows[0]);
+  } catch (err) {
+    res.send(err);
+  }
+};
+
+module.exports = {
+  createProduct,
+  getProducts,
+  updateProduct,
+  deleteProduct,
+  registerAdmin,
+};
