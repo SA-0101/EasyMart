@@ -1,5 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { ShoppingBasket, List, PlusCircle, Pencil, LogOut } from "lucide-react";
+import {
+  ShoppingBasket,
+  List,
+  PlusCircle,
+  UserPlus,
+  LogOut,
+} from "lucide-react";
 
 export default function AdminSidebar() {
   const navigate = useNavigate();
@@ -22,7 +28,7 @@ export default function AdminSidebar() {
       <aside className="hidden w-60 shrink-0 flex-col border-r border-stone-200 bg-white sm:flex">
         <div className="flex items-center gap-2 border-b border-stone-200 px-5 py-5 text-emerald-800">
           <ShoppingBasket size={24} />
-          <span className="text-lg font-bold">SuperMart</span>
+          <span className="text-lg font-bold">ElevenMART</span>
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 p-4">
@@ -33,6 +39,14 @@ export default function AdminSidebar() {
           <NavLink to="/admin/products" end className={navItemClass}>
             <List size={17} />
             Products
+          </NavLink>
+
+          <p className="mb-1 mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-stone-400">
+            Admins
+          </p>
+          <NavLink to="/admin/register" className={navItemClass}>
+            <UserPlus size={17} />
+            Add Admin
           </NavLink>
         </nav>
 
@@ -51,7 +65,7 @@ export default function AdminSidebar() {
       <div className="fixed inset-x-0 top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white px-4 py-3 sm:hidden">
         <div className="flex items-center gap-2 text-emerald-800">
           <ShoppingBasket size={20} />
-          <span className="text-base font-bold">SuperMart Admin</span>
+          <span className="text-base font-bold">ElevenMART Admin</span>
         </div>
         <button onClick={handleLogout} className="text-red-600">
           <LogOut size={18} />
@@ -65,6 +79,9 @@ export default function AdminSidebar() {
         </NavLink>
         <NavLink to="/admin/products/add" className={navItemClass}>
           <PlusCircle size={18} />
+        </NavLink>
+        <NavLink to="/admin/register" className={navItemClass}>
+          <UserPlus size={18} />
         </NavLink>
       </nav>
     </>

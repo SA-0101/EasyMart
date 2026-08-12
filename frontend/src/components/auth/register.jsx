@@ -60,7 +60,7 @@ export default function RegisterPage() {
             Create an account
           </h1>
           <p className="text-center text-sm text-stone-500">
-            Join SuperMart as a customer or staff member
+            Join ElevenMart as a customer or staff member
           </p>
         </div>
 

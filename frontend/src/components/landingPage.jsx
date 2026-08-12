@@ -38,7 +38,7 @@ export default function SupermartLanding() {
       // No body/headers needed here — the refresh_token is an httpOnly cookie,
       // "credentials: include" is what makes the browser attach it automatically.
       const res = await fetch("http://localhost:3000/logout", {
-        method: "POST",
+        method: "GET",
         credentials: "include",
       });
 
@@ -62,7 +62,7 @@ export default function SupermartLanding() {
       <header className="sticky top-0 z-10 flex flex-col sm:flex-row items-center justify-between gap-3 bg-emerald-800 px-4 py-4 sm:px-8 shadow-md">
         <div className="flex items-center gap-2 text-white">
           <ShoppingBasket size={24} />
-          <span className="text-xl font-bold tracking-wide">ElevenMART</span>
+          <span className="text-xl font-bold tracking-wide">ElevenMart</span>
         </div>
 
         <div className="flex w-full sm:w-auto gap-3">

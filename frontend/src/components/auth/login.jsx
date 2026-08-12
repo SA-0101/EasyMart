@@ -61,7 +61,7 @@ export default function LoginPage() {
           <ShoppingBasket size={30} />
           <h1 className="text-xl font-bold text-stone-900">Welcome back</h1>
           <p className="text-center text-sm text-stone-500">
-            Log in to your SuperMart account
+            Log in to your ElevenMart account
           </p>
         </div>
 
