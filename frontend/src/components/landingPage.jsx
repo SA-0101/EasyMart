@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingBasket, Loader2, ImageOff } from "lucide-react";
+import { ShoppingBasket, Loader2, ImageOff, LogOut } from "lucide-react";
 
 export default function SupermartLanding() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loggingOut, setLoggingOut] = useState(false);
   const navigate = useNavigate();
+
+  // A logged-in user has an access token saved from login (see LoginPage)
+  const isLoggedIn = Boolean(localStorage.getItem("accessToken"));
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,28 +32,69 @@ export default function SupermartLanding() {
     fetchProducts();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+      // No body/headers needed here — the refresh_token is an httpOnly cookie,
+      // "credentials: include" is what makes the browser attach it automatically.
+      const res = await fetch("http://localhost:3000/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error(`Logout failed with status ${res.status}`);
+      }
+    } catch (err) {
+      // Even if the server call fails (e.g. network issue), still clear the
+      // client-side session so the user isn't stuck "logged in" locally.
+      console.error("Logout request failed:", err);
+    } finally {
+      localStorage.removeItem("accessToken");
+      setLoggingOut(false);
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-stone-50">
       {/* Header */}
       <header className="sticky top-0 z-10 flex flex-col sm:flex-row items-center justify-between gap-3 bg-emerald-800 px-4 py-4 sm:px-8 shadow-md">
         <div className="flex items-center gap-2 text-white">
           <ShoppingBasket size={24} />
-          <span className="text-xl font-bold tracking-wide">SuperMart</span>
+          <span className="text-xl font-bold tracking-wide">ElevenMART</span>
         </div>
 
         <div className="flex w-full sm:w-auto gap-3">
-          <button
-            onClick={() => navigate("/login")}
-            className="flex-1 sm:flex-none rounded-md border-[1.5px] border-white bg-transparent px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-          >
-            Login
-          </button>
-          <button
-            onClick={() => navigate("/register")}
-            className="flex-1 sm:flex-none rounded-md border-none bg-amber-400 px-5 py-2 text-sm font-bold text-stone-900 transition-colors hover:bg-amber-500"
-          >
-            Register
-          </button>
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="flex flex-1 items-center justify-center gap-2 rounded-md border-none bg-red-500 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
+            >
+              {loggingOut ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <LogOut size={16} />
+              )}
+              {loggingOut ? "Logging out..." : "Logout"}
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/login")}
+                className="flex-1 sm:flex-none rounded-md border-[1.5px] border-white bg-transparent px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate("/register")}
+                className="flex-1 sm:flex-none rounded-md border-none bg-amber-400 px-5 py-2 text-sm font-bold text-stone-900 transition-colors hover:bg-amber-500"
+              >
+                Register
+              </button>
+            </>
+          )}
         </div>
       </header>
 
@@ -96,7 +141,7 @@ export default function SupermartLanding() {
 
       {/* Footer */}
       <footer className="bg-stone-900 px-4 py-5 text-center text-xs text-stone-400 sm:px-8">
-        © {new Date().getFullYear()} SuperMart. All rights reserved.
+        © {new Date().getFullYear()} ElevenMART. All rights reserved.
       </footer>
     </div>
   );

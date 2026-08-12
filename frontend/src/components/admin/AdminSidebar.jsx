@@ -32,7 +32,7 @@ export default function AdminSidebar() {
           {/* "end" ensures this only highlights on exact "/admin" or "/admin/products", not nested add/update/delete */}
           <NavLink to="/admin/products" end className={navItemClass}>
             <List size={17} />
-            Read Products
+            Products
           </NavLink>
         </nav>
 
