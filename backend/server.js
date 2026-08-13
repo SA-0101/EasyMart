@@ -41,7 +41,7 @@ app.post("/register", registerUser);
 app.post(
   "/admin/register",
   token_auth,
-  // access_middleware("admin"),
+  access_middleware("admin"),
   registerAdmin,
 );
 app.post("/login", loginUser);
@@ -52,7 +52,7 @@ app.post("/products", token_auth, access_middleware("admin"), createProduct);
 app.get(
   "/products",
   token_auth,
-  // access_middleware("admin", "customer"),
+  access_middleware("admin", "customer"),
   getProducts,
 );
 app.patch(
