@@ -5,22 +5,34 @@ require("dotenv").config();
 
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 const ACCESS_SECRET = process.env.ACCESS_SECRET;
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const { username, email, password, role } = req.body;
     if (!username || !email || !password || !role) {
-      res.status(401).json({ err: "all fields required" });
+      const err = {
+        status: 401,
+        message: "all fields required",
+      };
+      return next(err);
     }
 
     if (role !== "customer" && role !== "rider") {
-      return res.status(401).json({ message: "Invalid role" });
+      const err = {
+        status: 401,
+        message: "Invalid role",
+      };
+      return next(err);
     }
     const result = await pool.query(
       "SELECT * FROM users WHERE email=$1 AND role=$2",
       [email, role],
     );
     if (result.rows.length != 0) {
-      return res.status(200).json({ message: "already registered" });
+      const err = {
+        status: 200,
+        message: "already registered",
+      };
+      return next(err);
     }
     const hash_pass = await bcrypt.hash(password, 10);
     const user = await pool.query(
@@ -29,71 +41,82 @@ const registerUser = async (req, res) => {
     );
     res.send(user.rows[0]);
   } catch (err) {
-    res.send(err);
+    return next(err);
   }
 };
 
-const loginUser = async (req, res) => {
-  //   try {
-  const { email, password, role } = req.body;
-  console.log(email, password);
-  if (!email || !password) {
-    return res.status(401).json({ err: "all fields are required" });
+const loginUser = async (req, res, next) => {
+  try {
+    const { email, password, role } = req.body;
+    console.log(email, password);
+    if (!email || !password) {
+      const err = {
+        status: 401,
+        message: "all fields required",
+      };
+      return next(err);
+    }
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email=$1 and role=$2",
+      [email, role],
+    );
+    if (result.rows.length == 0) {
+      const err = {
+        status: 401,
+        message: "Invalid email or password",
+      };
+      return next(err);
+    }
+    const verify_pass = await bcrypt.compare(password, result.rows[0].password);
+    if (!verify_pass) {
+      const err = {
+        status: 401,
+        message: "Invalid email or password",
+      };
+      return next(err);
+    }
+
+    const access_token = jwt.sign(
+      {
+        id: result.rows[0].id,
+        email: result.rows[0].email,
+        role: result.rows[0].role,
+      },
+      ACCESS_SECRET,
+      {
+        expiresIn: "60m",
+      },
+    );
+
+    const refresh_token = jwt.sign(
+      {
+        id: result.rows[0].id,
+        email: result.rows[0].email,
+        role: result.rows[0].role,
+      },
+      REFRESH_SECRET,
+      {
+        expiresIn: "20d",
+      },
+    );
+
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    const result2 = await pool.query(
+      "UPDATE users SET refresh_token=$1 WHERE id=$2 RETURNING *",
+      [refresh_token, result.rows[0].id],
+    );
+    res.send({ access_token });
+  } catch (err) {
+    return next(err);
   }
-  const result = await pool.query(
-    "SELECT * FROM users WHERE email=$1 and role=$2",
-    [email, role],
-  );
-  if (result.rows.length == 0) {
-    return res.status(401).json({ err: "Invalid email or password" });
-  }
-  const verify_pass = await bcrypt.compare(password, result.rows[0].password);
-  if (!verify_pass) {
-    return res.status(401).json({ err: "Invalid email or password" });
-  }
-
-  const access_token = jwt.sign(
-    {
-      id: result.rows[0].id,
-      email: result.rows[0].email,
-      role: result.rows[0].role,
-    },
-    ACCESS_SECRET,
-    {
-      expiresIn: "60m",
-    },
-  );
-
-  const refresh_token = jwt.sign(
-    {
-      id: result.rows[0].id,
-      email: result.rows[0].email,
-      role: result.rows[0].role,
-    },
-    REFRESH_SECRET,
-    {
-      expiresIn: "20d",
-    },
-  );
-
-  res.cookie("refresh_token", refresh_token, {
-    httpOnly: true,
-    secure: false,
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
-
-  const result2 = await pool.query(
-    "UPDATE users SET refresh_token=$1 WHERE id=$2 RETURNING *",
-    [refresh_token, result.rows[0].id],
-  );
-  res.send({ access_token });
-  //   }
-  //   catch (err) {
-  //     res.send(err);
-  //   }
 };
 
-const refresh_token = async (req, res) => {
+const refresh_token = async (req, res, next) => {
   try {
     const refresh_token = req.cookies.refresh_token;
     const result = await pool.query(
@@ -101,7 +124,11 @@ const refresh_token = async (req, res) => {
       [refresh_token],
     );
     if (result.rows.length == 0) {
-      return res.json({ message: "provide valid refresh" });
+      const err = {
+        status: 401,
+        message: "provide valid token",
+      };
+      return next(err);
     }
 
     const new_access_token = jwt.sign(
@@ -140,11 +167,11 @@ const refresh_token = async (req, res) => {
     );
     res.send({ access_token: new_access_token });
   } catch (err) {
-    res.json({ err: err });
+    return next(err);
   }
 };
 
-const logoutUser = async (req, res) => {
+const logoutUser = async (req, res, next) => {
   try {
     const refresh_token = req.cookies.refresh_token;
     const result = await pool.query(
@@ -152,7 +179,11 @@ const logoutUser = async (req, res) => {
       [refresh_token],
     );
     if (result.rows.length == 0) {
-      return res.json({ message: "provide valid refresh" });
+      const err = {
+        status: 201,
+        message: "provide valid token",
+      };
+      return next(err);
     }
     const result2 = await pool.query(
       "UPDATE users SET refresh_token=$1 WHERE id=$2",
@@ -162,7 +193,8 @@ const logoutUser = async (req, res) => {
     res.clearCookie("refresh_token");
     res.status(200).json({ message: "Logout successfully" });
   } catch (err) {
-    res.json({ err: `error in logout ${err}` });
+    message = `error in logout ${err}`;
+    return next(err);
   }
 };
 

@@ -5,7 +5,11 @@ const token_auth = async (req, res, next) => {
   const access_token = req.get("Authorization").split(" ")[1];
   const decode = jwt.verify(access_token, ACCESS_SECRET);
   if (!decode) {
-    return res.json({ message: "Invalid token" });
+    const err = {
+      status: 201,
+      message: "Invalid token",
+    };
+    return next(err);
   }
   req.user = decode;
   return next();
