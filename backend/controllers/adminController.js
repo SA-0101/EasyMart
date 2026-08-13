@@ -10,7 +10,7 @@ const createProduct = async (req, res, next) => {
       "INSERT INTO products (name,description,image,price) VALUES($1,$2,$3,$4) RETURNING *",
       [name, description, image, price],
     );
-    res.json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
   } catch (err) {
     return next(err);
   }
@@ -19,7 +19,7 @@ const createProduct = async (req, res, next) => {
 const getProducts = async (req, res, next) => {
   try {
     const result = await pool.query("SELECT * FROM products");
-    res.json(result.rows);
+    res.status(200).json(result.rows);
   } catch (err) {
     return next(err);
   }
@@ -34,7 +34,7 @@ const updateProduct = async (req, res, next) => {
       "UPDATE products SET name=COALESCE($1,name),description=COALESCE($2,description),image=COALESCE($3,image),price=COALESCE($4,price) WHERE id=$5 RETURNING *",
       [name, description, image, price, id],
     );
-    res.json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
   } catch (err) {
     return next(err);
   }
@@ -48,7 +48,7 @@ const deleteProduct = async (req, res, next) => {
       "DELETE FROM products WHERE id=$1 RETURNING *",
       [id],
     );
-    res.json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
   } catch (err) {
     return next(err);
   }
@@ -67,7 +67,7 @@ const registerAdmin = async (req, res, next) => {
 
     if (role !== "admin") {
       const err = {
-        status: 401,
+        status: 400,
         message: "Invalid role",
       };
       return next(err);
@@ -79,9 +79,10 @@ const registerAdmin = async (req, res, next) => {
     );
     if (result.rows.length != 0) {
       const err = {
-        status: 200,
+        status: 209,
         message: "already registered",
       };
+      return next(err);
       return next(err);
     }
     const hash_pass = await bcrypt.hash(password, 10);
@@ -90,7 +91,7 @@ const registerAdmin = async (req, res, next) => {
       "INSERT INTO users (username,email,password,role) VALUES($1,$2,$3,$4) RETURNING *",
       [username, email, hash_pass, role],
     );
-    res.send(user.rows[0]);
+    res.status(200).send(user.rows[0]);
   } catch (err) {
     err.message = "error in admin registration";
     return next(err);

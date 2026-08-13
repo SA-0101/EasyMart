@@ -10,7 +10,7 @@ const registerUser = async (req, res, next) => {
     const { username, email, password, role } = req.body;
     if (!username || !email || !password || !role) {
       const err = {
-        status: 401,
+        status: 400,
         message: "all fields required",
       };
       return next(err);
@@ -18,7 +18,7 @@ const registerUser = async (req, res, next) => {
 
     if (role !== "customer" && role !== "rider") {
       const err = {
-        status: 401,
+        status: 400,
         message: "Invalid role",
       };
       return next(err);
@@ -29,7 +29,7 @@ const registerUser = async (req, res, next) => {
     );
     if (result.rows.length != 0) {
       const err = {
-        status: 200,
+        status: 209,
         message: "already registered",
       };
       return next(err);
@@ -39,7 +39,7 @@ const registerUser = async (req, res, next) => {
       "INSERT INTO users (username,email,password,role) VALUES($1,$2,$3,$4) RETURNING *",
       [username, email, hash_pass, role],
     );
-    res.send(user.rows[0]);
+    res.status(200).json(user.rows[0]);
   } catch (err) {
     return next(err);
   }
@@ -51,7 +51,7 @@ const loginUser = async (req, res, next) => {
     console.log(email, password);
     if (!email || !password) {
       const err = {
-        status: 401,
+        status: 400,
         message: "all fields required",
       };
       return next(err);
@@ -62,7 +62,7 @@ const loginUser = async (req, res, next) => {
     );
     if (result.rows.length == 0) {
       const err = {
-        status: 401,
+        status: 400,
         message: "Invalid email or password",
       };
       return next(err);
@@ -70,7 +70,7 @@ const loginUser = async (req, res, next) => {
     const verify_pass = await bcrypt.compare(password, result.rows[0].password);
     if (!verify_pass) {
       const err = {
-        status: 401,
+        status: 400,
         message: "Invalid email or password",
       };
       return next(err);
@@ -110,7 +110,7 @@ const loginUser = async (req, res, next) => {
       "UPDATE users SET refresh_token=$1 WHERE id=$2 RETURNING *",
       [refresh_token, result.rows[0].id],
     );
-    res.send({ access_token });
+    res.status(200).json({ access_token });
   } catch (err) {
     return next(err);
   }
@@ -125,7 +125,7 @@ const refresh_token = async (req, res, next) => {
     );
     if (result.rows.length == 0) {
       const err = {
-        status: 401,
+        status: 400,
         message: "provide valid token",
       };
       return next(err);
@@ -165,7 +165,7 @@ const refresh_token = async (req, res, next) => {
       "UPDATE users SET refresh_token=$1 WHERE id=$2",
       [new_refresh_token, result.rows[0].id],
     );
-    res.send({ access_token: new_access_token });
+    res.status(200).json({ access_token: new_access_token });
   } catch (err) {
     return next(err);
   }
@@ -180,7 +180,7 @@ const logoutUser = async (req, res, next) => {
     );
     if (result.rows.length == 0) {
       const err = {
-        status: 201,
+        status: 400,
         message: "provide valid token",
       };
       return next(err);
