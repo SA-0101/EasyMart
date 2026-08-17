@@ -45,8 +45,8 @@ const updateQuantity = (req, res) => {
   res.send("update quantity");
 };
 const removeProduct = async (req, res, next) => {
+  //ISSUE IS THAT EVEN IF THE PRODUCT IS NOT IN THE CART STILL THE QUERY RUNS AND RETURNED EMPTY ARRAY
   const id = req.params.id;
-  console.log("id is ", id);
   if (!id) {
     err = {
       status: 404,
@@ -54,14 +54,17 @@ const removeProduct = async (req, res, next) => {
     };
   }
   const user_id = req.user.id;
-  console.log("user id id ", user_id);
   const result = await pool.query(
     "DELETE FROM cart WHERE id=$1 AND user_id=$2 RETURNING *",
     [id, user_id],
   );
   res.send(result.rows);
 };
-const clearCart = (req, res) => {
+const clearCart = async (req, res) => {
+  const result = await pool.query(
+    "DELETE FROM cart WHERE user_id=$1 RETURNING *",
+    [req.user.id],
+  );
   res.send("clear cart");
 };
 

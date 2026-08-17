@@ -89,7 +89,7 @@ app.get("/products/filter", getProductsByName);
 app.post("/cart/:id", token_auth, addProduct);
 app.get("/cart", token_auth, viewCart);
 app.delete("/cart/:id", token_auth, removeProduct);
-app.delete("/cart", clearCart);
+app.delete("/cart", token_auth, clearCart);
 
 app.use(error_middleware);
 
