@@ -21,6 +21,16 @@ const {
 const token_auth = require("./middlewares/token-auth");
 const access_middleware = require("./middlewares/access-middleware");
 const error_middleware = require("./middlewares/error-middleware");
+const {
+  getProductById,
+  getProductsByName,
+} = require("./controllers/productController");
+const {
+  viewCart,
+  addProduct,
+  removeProduct,
+  clearCart,
+} = require("./controllers/cartController");
 
 const CLIENT_URL = process.env.CLIENT_URL;
 
@@ -51,8 +61,8 @@ app.get("/logout", logoutUser);
 app.post("/products", token_auth, access_middleware("admin"), createProduct);
 app.get(
   "/products",
-  token_auth,
-  access_middleware("admin", "customer"),
+  // token_auth,
+  // access_middleware("admin", "customer"),
   getProducts,
 );
 app.patch(
@@ -67,6 +77,16 @@ app.delete(
   access_middleware("admin"),
   deleteProduct,
 );
+
+//Products details,filter APIs
+app.get("/details/:id", getProductById);
+app.get("/products/filter", getProductsByName);
+
+//cart APIs
+app.post("/cart/:id", addProduct);
+app.get("/cart/products", token_auth, viewCart);
+app.delete("/cart/:id", removeProduct);
+app.delete("/cart/products", clearCart);
 
 app.use(error_middleware);
 
