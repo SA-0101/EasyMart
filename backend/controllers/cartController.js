@@ -44,8 +44,22 @@ const viewCart = async (req, res, next) => {
 const updateQuantity = (req, res) => {
   res.send("update quantity");
 };
-const removeProduct = (req, res) => {
-  res.send("remove product");
+const removeProduct = async (req, res, next) => {
+  const id = req.params.id;
+  console.log("id is ", id);
+  if (!id) {
+    err = {
+      status: 404,
+      message: "no such product to remove",
+    };
+  }
+  const user_id = req.user.id;
+  console.log("user id id ", user_id);
+  const result = await pool.query(
+    "DELETE FROM cart WHERE id=$1 AND user_id=$2 RETURNING *",
+    [id, user_id],
+  );
+  res.send(result.rows);
 };
 const clearCart = (req, res) => {
   res.send("clear cart");
