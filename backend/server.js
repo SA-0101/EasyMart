@@ -47,6 +47,8 @@ app.use(
 );
 
 app.get("/users", getUsers);
+
+//Auth APIs
 app.post("/register", registerUser);
 app.post(
   "/admin/register",
@@ -58,6 +60,7 @@ app.post("/login", loginUser);
 app.get("/refresh", refresh_token);
 app.get("/logout", logoutUser);
 
+//Admin access APIs
 app.post("/products", token_auth, access_middleware("admin"), createProduct);
 app.get(
   "/products",
@@ -83,7 +86,7 @@ app.get("/details/:id", getProductById);
 app.get("/products/filter", getProductsByName);
 
 //cart APIs
-app.post("/cart/:id", addProduct);
+app.post("/cart/:id", token_auth, addProduct);
 app.get("/cart/products", token_auth, viewCart);
 app.delete("/cart/:id", removeProduct);
 app.delete("/cart/products", clearCart);
