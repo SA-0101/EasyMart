@@ -5,32 +5,8 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { getUsers } = require("./controllers/userController");
-// const {
-//   refresh_token,
-//   loginUser,
-//   logoutUser,
-//   registerUser,
-// } = require("./controllers/authController");
-// const {
-//   createProduct,
-//   getProducts,
-//   updateProduct,
-//   deleteProduct,
-//   registerAdmin,
-// } = require("./controllers/adminController");
-// const token_auth = require("./middlewares/token-auth");
-// const access_middleware = require("./middlewares/access-middleware");
 const error_middleware = require("./middlewares/error-middleware");
-// const {
-//   getProductById,
-//   getProductsByName,
-// } = require("./controllers/productController");
-// const {
-//   viewCart,
-//   addProduct,
-//   removeProduct,
-//   clearCart,
-// } = require("./controllers/cartController");
+
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const cartRoutes = require("./routes/cartRoutes");
@@ -55,13 +31,13 @@ app.use("/users", getUsers);
 //Auth APIs
 app.use("/", authRoutes);
 
+//admin access APIs
 app.use("/products", adminRoutes);
 
-//Products details,filter APIs
+//product APIs
 app.use("/product", productRoutes);
 
 //cart APIs
-
 app.use("/cart", cartRoutes);
 
 app.use(error_middleware);
