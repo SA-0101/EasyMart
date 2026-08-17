@@ -87,9 +87,9 @@ app.get("/products/filter", getProductsByName);
 
 //cart APIs
 app.post("/cart/:id", token_auth, addProduct);
-app.get("/cart/products", token_auth, viewCart);
+app.get("/cart", token_auth, viewCart);
 app.delete("/cart/:id", removeProduct);
-app.delete("/cart/products", clearCart);
+app.delete("/cart", clearCart);
 
 app.use(error_middleware);
 
