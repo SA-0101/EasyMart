@@ -5,32 +5,36 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { getUsers } = require("./controllers/userController");
-const {
-  refresh_token,
-  loginUser,
-  logoutUser,
-  registerUser,
-} = require("./controllers/authController");
-const {
-  createProduct,
-  getProducts,
-  updateProduct,
-  deleteProduct,
-  registerAdmin,
-} = require("./controllers/adminController");
-const token_auth = require("./middlewares/token-auth");
-const access_middleware = require("./middlewares/access-middleware");
+// const {
+//   refresh_token,
+//   loginUser,
+//   logoutUser,
+//   registerUser,
+// } = require("./controllers/authController");
+// const {
+//   createProduct,
+//   getProducts,
+//   updateProduct,
+//   deleteProduct,
+//   registerAdmin,
+// } = require("./controllers/adminController");
+// const token_auth = require("./middlewares/token-auth");
+// const access_middleware = require("./middlewares/access-middleware");
 const error_middleware = require("./middlewares/error-middleware");
-const {
-  getProductById,
-  getProductsByName,
-} = require("./controllers/productController");
-const {
-  viewCart,
-  addProduct,
-  removeProduct,
-  clearCart,
-} = require("./controllers/cartController");
+// const {
+//   getProductById,
+//   getProductsByName,
+// } = require("./controllers/productController");
+// const {
+//   viewCart,
+//   addProduct,
+//   removeProduct,
+//   clearCart,
+// } = require("./controllers/cartController");
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 const CLIENT_URL = process.env.CLIENT_URL;
 
@@ -46,50 +50,19 @@ app.use(
   }),
 );
 
-app.get("/users", getUsers);
+app.use("/users", getUsers);
 
 //Auth APIs
-app.post("/register", registerUser);
-app.post(
-  "/admin/register",
-  token_auth,
-  access_middleware("admin"),
-  registerAdmin,
-);
-app.post("/login", loginUser);
-app.get("/refresh", refresh_token);
-app.get("/logout", logoutUser);
+app.use("/", authRoutes);
 
-//Admin access APIs
-app.post("/products", token_auth, access_middleware("admin"), createProduct);
-app.get(
-  "/products",
-  // token_auth,
-  // access_middleware("admin", "customer"),
-  getProducts,
-);
-app.patch(
-  "/products/:id",
-  token_auth,
-  access_middleware("admin"),
-  updateProduct,
-);
-app.delete(
-  "/products/:id",
-  token_auth,
-  access_middleware("admin"),
-  deleteProduct,
-);
+app.use("/products", adminRoutes);
 
 //Products details,filter APIs
-app.get("/details/:id", getProductById);
-app.get("/products/filter", getProductsByName);
+app.use("/product", productRoutes);
 
 //cart APIs
-app.post("/cart/:id", token_auth, addProduct);
-app.get("/cart", token_auth, viewCart);
-app.delete("/cart/:id", token_auth, removeProduct);
-app.delete("/cart", token_auth, clearCart);
+
+app.use("/cart", cartRoutes);
 
 app.use(error_middleware);
 
