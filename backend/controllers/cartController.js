@@ -46,26 +46,34 @@ const updateQuantity = (req, res) => {
 };
 const removeProduct = async (req, res, next) => {
   //ISSUE IS THAT EVEN IF THE PRODUCT IS NOT IN THE CART STILL THE QUERY RUNS AND RETURNED EMPTY ARRAY
-  const id = req.params.id;
-  if (!id) {
-    err = {
-      status: 404,
-      message: "no such product to remove",
-    };
+  try {
+    const id = req.params.id;
+    if (!id) {
+      err = {
+        status: 404,
+        message: "no such product to remove",
+      };
+    }
+    const user_id = req.user.id;
+    const result = await pool.query(
+      "DELETE FROM cart WHERE id=$1 AND user_id=$2 RETURNING *",
+      [id, user_id],
+    );
+    res.send(result.rows);
+  } catch (err) {
+    return next(err);
   }
-  const user_id = req.user.id;
-  const result = await pool.query(
-    "DELETE FROM cart WHERE id=$1 AND user_id=$2 RETURNING *",
-    [id, user_id],
-  );
-  res.send(result.rows);
 };
 const clearCart = async (req, res) => {
-  const result = await pool.query(
-    "DELETE FROM cart WHERE user_id=$1 RETURNING *",
-    [req.user.id],
-  );
-  res.send("clear cart");
+  try {
+    const result = await pool.query(
+      "DELETE FROM cart WHERE user_id=$1 RETURNING *",
+      [req.user.id],
+    );
+    res.send(result.rows);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 module.exports = {
