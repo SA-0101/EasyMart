@@ -10,7 +10,7 @@ const addProduct = async (req, res) => {
 };
 const viewCart = async (req, res) => {
   const id = req.user.id;
-  // const result = await pool.query("SELECT * FROM cart WHERE user_id=$1", [id]);
+  const result = await pool.query("SELECT * FROM cart WHERE user_id=$1", [id]);
   res.send(result.rows);
 };
 const updateQuantity = (req, res) => {
