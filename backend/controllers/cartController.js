@@ -41,7 +41,7 @@ const viewCart = async (req, res, next) => {
     return next(err);
   }
 };
-const updateQuantity = (req, res) => {
+const updateQuantity = async (req, res) => {
   res.send("update quantity");
 };
 const removeProduct = async (req, res, next) => {
