@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.get("/", getProducts);
 router.get("/details/:id", getProductById);
-router.get("/products/filter", getProductsByName);
+router.get("/filter", getProductsByName);
 
 module.exports = router;

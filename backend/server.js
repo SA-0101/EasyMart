@@ -10,37 +10,29 @@ const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const productRoutes = require("./routes/productRoutes");
-
-const CLIENT_URL = process.env.CLIENT_URL;
+const orderRoutes = require("./routes/orderRoutes");
+const corsFunc = require("./middlewares/cors");
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(corsFunc);
 
-app.use(
-  cors({
-    origin: CLIENT_URL,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
-  }),
-);
-
+//User APIs
 app.use("/users", getUsers);
-
 //Auth APIs
 app.use("/", authRoutes);
-
 //admin access APIs
 app.use("/products", adminRoutes);
-
 //product APIs
-app.use("/product", productRoutes);
-
+app.use("/products", productRoutes);
 //cart APIs
 app.use("/cart", cartRoutes);
 
-app.use(error_middleware);
+//order APIs
+app.use("/order", orderRoutes);
 
+app.use(error_middleware);
 app.listen(3000, () => {
   console.log("server is running on PORT:3000");
 });
