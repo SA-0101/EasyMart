@@ -45,5 +45,13 @@ const retrieveOrders = async (req, res, next) => {
   );
   res.send(result.rows);
 };
+const cancelOrder = async (req, res, next) => {
+  const id = req.params.id;
+  const result = pool.query(
+    "UPDATE orders SET user_id=COALESCE($1,user_id), name=COALESCE($2,name),contact=COALESCE($3,contact),address=COALESCE($4,address),payment_method=COALESCE($5,payment_method),total_amount=COALESCE($6,total_amount),delivery_charges=COALESCE($7,delivery_charges), status=$8 WHERE id=$9 AND user_id=$10 RETURNING *",
+    [null, null, null, null, null, null, null, "cancel", id, req.user.id],
+  );
+  res.send("status changed");
+};
 
-module.exports = { placeOrder, retrieveOrders };
+module.exports = { placeOrder, retrieveOrders, cancelOrder };

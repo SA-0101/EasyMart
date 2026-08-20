@@ -31,7 +31,7 @@ app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
 
 //order APIs
-app.use("/order", orderRoutes);
+app.use("/order", token_auth, orderRoutes);
 
 app.use(error_middleware);
 app.listen(3000, () => {
