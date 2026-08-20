@@ -7,6 +7,6 @@ const token_auth = require("../middlewares/token-auth");
 const router = express.Router();
 
 router.post("/", token_auth, placeOrder);
-router.get("/", retrieveOrders);
+router.get("/", token_auth, retrieveOrders);
 
 module.exports = router;

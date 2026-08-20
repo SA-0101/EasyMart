@@ -35,7 +35,15 @@ const placeOrder = async (req, res, next) => {
 };
 
 const retrieveOrders = async (req, res, next) => {
-  res.send("order get");
+  const result = await pool.query(
+    `SELECT orders.id,orders.name,orders.contact,orders.address,order_items.name,order_items.price,order_items.quantity
+    FROM orders
+    INNER JOIN order_items
+    ON orders.id=order_items.order_id
+    WHERE user_id=$1`,
+    [req.user.id],
+  );
+  res.send(result.rows);
 };
 
 module.exports = { placeOrder, retrieveOrders };
