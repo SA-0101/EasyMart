@@ -34,13 +34,31 @@ const placeOrder = async (req, res, next) => {
   res.send("order placed");
 };
 
-const retrieveOrders = async (req, res, next) => {
+const getOrders = async (req, res, next) => {
   const result = await pool.query(
-    `SELECT orders.id,orders.name,orders.contact,orders.address,order_items.name,order_items.price,order_items.quantity
-    FROM orders
-    INNER JOIN order_items
-    ON orders.id=order_items.order_id
-    WHERE user_id=$1`,
+    // SELECT orders.id,orders.name,orders.contact,orders.address
+    // FROM orders
+    // INNER JOIN order_items
+    // ON orders.id=order_items.order_id
+    // WHERE user_id=$1
+    ` SELECT 
+    o.id,
+    o.name,
+    o.contact,
+    o.address,
+    COALESCE(
+      json_agg(
+        json_build_object(
+          'name', oi.name,
+          'price', oi.price,
+          'quantity', oi.quantity
+        )
+      ) FILTER (WHERE oi.id IS NOT NULL), '[]'
+    ) AS items
+  FROM orders o
+  LEFT JOIN order_items oi ON o.id = oi.order_id
+  WHERE o.user_id = $1
+  GROUP BY o.id`,
     [req.user.id],
   );
   res.send(result.rows);
@@ -54,4 +72,4 @@ const cancelOrder = async (req, res, next) => {
   res.send("status changed");
 };
 
-module.exports = { placeOrder, retrieveOrders, cancelOrder };
+module.exports = { placeOrder, getOrders, cancelOrder };
