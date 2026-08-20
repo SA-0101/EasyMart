@@ -9,7 +9,7 @@ const {
 const router = express.Router();
 
 router.get("/products", token_auth, viewCart);
-router.post("/product/:id", token_auth, addProduct);
+router.post("/product", token_auth, addProduct);
 router.delete("/product/:id", token_auth, removeProduct);
 router.delete("/products", token_auth, clearCart);
 

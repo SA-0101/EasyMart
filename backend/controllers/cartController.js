@@ -2,16 +2,12 @@ const pool = require("./../db/db");
 
 const addProduct = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    if (!id) {
-      err = {
-        status: 404,
-        message: "provide id",
-      };
-    }
+    const { product_id, name, description, image, price, quantity } = req.body;
+    console.log(product_id, name, description, image, price, quantity);
+
     const result = await pool.query(
-      "INSERT INTO cart (product_id,user_id) VALUES($1,$2) RETURNING *",
-      [id, req.user.id],
+      "INSERT INTO cart (user_id,product_id,name,description,image,price,quantity) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+      [req.user.id, product_id, name, description, image, price, quantity],
     );
     res.send(result.rows);
   } catch (err) {
@@ -24,11 +20,9 @@ const viewCart = async (req, res, next) => {
     if (!id) {
       return next(err);
     }
-
-    const result = await pool.query(
-      "SELECT products.name,products.description,products.image,products.price FROM products INNER JOIN cart ON products.id=cart.product_id WHERE user_id=$1",
-      [id],
-    );
+    const result = await pool.query("SELECT * FROM cart WHERE user_id=$1", [
+      id,
+    ]);
     if (result.rows.length == 0) {
       err = {
         status: 404,
@@ -36,7 +30,7 @@ const viewCart = async (req, res, next) => {
       };
       return next(err);
     }
-    res.send(result.rows);
+    res.status(200).json(result.rows);
   } catch (err) {
     return next(err);
   }

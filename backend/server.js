@@ -12,14 +12,15 @@ const cartRoutes = require("./routes/cartRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const corsFunc = require("./middlewares/cors");
+const token_auth = require("./middlewares/token-auth");
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(corsFunc);
+app.use(cors(corsFunc()));
 
 //User APIs
-app.use("/users", getUsers);
+app.use("/users", token_auth, getUsers);
 //Auth APIs
 app.use("/", authRoutes);
 //admin access APIs

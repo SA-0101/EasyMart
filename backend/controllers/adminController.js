@@ -19,6 +19,13 @@ const createProduct = async (req, res, next) => {
 const getProducts = async (req, res, next) => {
   try {
     const result = await pool.query("SELECT * FROM products");
+    if (result.rows.length == 0) {
+      const err = {
+        status: 404,
+        message: "No product found,add some products",
+      };
+      return next(err);
+    }
     res.status(200).json(result.rows);
   } catch (err) {
     return next(err);

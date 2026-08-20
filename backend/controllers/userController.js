@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const getUsers = async (req, res, next) => {
   try {
+    console.log(req.user.id);
     const result = await pool.query("SELECT * FROM users");
     if (result.rows.length == 0) {
       err = {
