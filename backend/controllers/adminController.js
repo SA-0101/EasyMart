@@ -105,10 +105,51 @@ const registerAdmin = async (req, res, next) => {
   }
 };
 
+const getOrders = async (req, res, next) => {
+  const result = await pool.query(`
+     SELECT 
+    o.id,
+    o.name,
+    o.contact,
+    o.address,
+    o.status,
+    COALESCE(
+      json_agg(
+        json_build_object(
+          'name', oi.name,
+          'price', oi.price,
+          'quantity', oi.quantity
+        )
+      ) FILTER (WHERE oi.id IS NOT NULL), '[]'
+    ) AS items
+  FROM orders o
+  LEFT JOIN order_items oi ON o.id = oi.order_id
+  GROUP BY o.id
+    `);
+  if (result.rows.length == 0) {
+    err = {
+      status: 400,
+      message: "NO orders placed yet",
+    };
+    return next(err);
+  }
+  res.status(200).json(result.rows);
+};
+
+const getRiders = async (req, res, next) => {
+  const result = await pool.query(
+    "SELECT username,email,role FROM users WHERE role=$1",
+    ["rider"],
+  );
+  res.status(200).json(result.rows);
+};
+
 module.exports = {
   createProduct,
   getProducts,
   updateProduct,
   deleteProduct,
   registerAdmin,
+  getOrders,
+  getRiders,
 };

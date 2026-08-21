@@ -24,7 +24,7 @@ app.use("/users", token_auth, getUsers);
 //Auth APIs
 app.use("/", authRoutes);
 //admin access APIs
-app.use("/products", adminRoutes);
+app.use("/admin", adminRoutes);
 //product APIs
 app.use("/products", productRoutes);
 //cart APIs

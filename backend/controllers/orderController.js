@@ -46,6 +46,7 @@ const getOrders = async (req, res, next) => {
     o.name,
     o.contact,
     o.address,
+    o.status,
     COALESCE(
       json_agg(
         json_build_object(
