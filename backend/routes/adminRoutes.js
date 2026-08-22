@@ -6,6 +6,7 @@ const {
   deleteProduct,
   getOrders,
   getRiders,
+  getOrderById,
 } = require("../controllers/adminController");
 const access_middleware = require("../middlewares/access-middleware");
 const token_auth = require("../middlewares/token-auth");
@@ -25,6 +26,8 @@ router.delete(
 );
 
 router.get("/orders", token_auth, access_middleware("admin"), getOrders);
+router.get("/orders/:id", token_auth, access_middleware("admin"), getOrderById);
+
 router.get("/riders", token_auth, access_middleware("admin"), getRiders);
 
 module.exports = router;
