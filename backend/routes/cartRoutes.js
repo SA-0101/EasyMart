@@ -8,9 +8,9 @@ const {
 } = require("../controllers/cartController");
 const router = express.Router();
 
-router.get("/products", token_auth, viewCart);
-router.post("/product", token_auth, addProduct);
-router.delete("/product/:id", token_auth, removeProduct);
-router.delete("/products", token_auth, clearCart);
+router.get("/products", viewCart);
+router.post("/products", addProduct);
+router.delete("/products/:id", removeProduct);
+router.delete("/products", clearCart);
 
 module.exports = router;

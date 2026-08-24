@@ -7,27 +7,48 @@ const {
   getOrders,
   getRiders,
   getOrderById,
+  updateStatus,
+  assignRider,
 } = require("../controllers/adminController");
 const access_middleware = require("../middlewares/access-middleware");
 const token_auth = require("../middlewares/token-auth");
+const multer = require("multer");
 
-router.post("/products", token_auth, access_middleware("admin"), createProduct);
+// const upload = multer({ dest: "./uploads" });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+router.post(
+  "/products",
+  token_auth,
+  access_middleware("admin"),
+  upload.single("image"),
+  createProduct,
+);
 router.patch(
   "/products/:id",
-  token_auth,
-  access_middleware("admin"),
+  upload.single("image"),
+  // token_auth,
+  // access_middleware("admin"),
   updateProduct,
 );
-router.delete(
-  "/products/:id",
-  token_auth,
-  access_middleware("admin"),
-  deleteProduct,
-);
+router.delete("/products/:id", access_middleware("admin"), deleteProduct);
 
-router.get("/orders", token_auth, access_middleware("admin"), getOrders);
-router.get("/orders/:id", token_auth, access_middleware("admin"), getOrderById);
+router.get("/orders", getOrders);
+router.get("/orders/:id", getOrderById);
+router.patch("/orders/status", access_middleware("admin"), updateStatus);
 
-router.get("/riders", token_auth, access_middleware("admin"), getRiders);
+router.get("/riders", getRiders);
+
+router.patch("/riders", assignRider);
 
 module.exports = router;

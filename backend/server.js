@@ -11,8 +11,11 @@ const adminRoutes = require("./routes/adminRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const riderRoutes = require("./routes/riderRoutes");
+const userRoutes = require("./routes/userRoutes");
 const corsFunc = require("./middlewares/cors");
 const token_auth = require("./middlewares/token-auth");
+const access_middleware = require("./middlewares/access-middleware");
 
 const app = express();
 app.use(express.json());
@@ -20,7 +23,7 @@ app.use(cookieParser());
 app.use(cors(corsFunc()));
 
 //User APIs
-app.use("/users", token_auth, getUsers);
+app.use("/users", token_auth, userRoutes);
 //Auth APIs
 app.use("/", authRoutes);
 //admin access APIs
@@ -28,10 +31,11 @@ app.use("/admin", adminRoutes);
 //product APIs
 app.use("/products", productRoutes);
 //cart APIs
-app.use("/cart", cartRoutes);
-
+app.use("/cart", token_auth, cartRoutes);
 //order APIs
-app.use("/order", token_auth, orderRoutes);
+app.use("/orders", token_auth, orderRoutes);
+//rider APIs
+app.use("/riders", token_auth, riderRoutes);
 
 app.use(error_middleware);
 app.listen(3000, () => {

@@ -8,9 +8,10 @@ const placeOrder = async (req, res, next) => {
     payment_method,
     total_amount,
     delivery_charges,
+    rider_id,
   } = req.body;
   const result = await pool.query(
-    "INSERT INTO orders (user_id,name,contact,address,payment_method,total_amount,delivery_charges) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+    "INSERT INTO orders (user_id,name,contact,address,payment_method,total_amount,delivery_charges,rider_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
     [
       req.user.id,
       name,
@@ -19,6 +20,7 @@ const placeOrder = async (req, res, next) => {
       payment_method,
       total_amount,
       delivery_charges,
+      rider_id,
     ],
   );
   console.log("this is result of order table ", result.rows);
@@ -67,8 +69,8 @@ const getOrders = async (req, res, next) => {
 const cancelOrder = async (req, res, next) => {
   const id = req.params.id;
   const result = pool.query(
-    "UPDATE orders SET user_id=COALESCE($1,user_id), name=COALESCE($2,name),contact=COALESCE($3,contact),address=COALESCE($4,address),payment_method=COALESCE($5,payment_method),total_amount=COALESCE($6,total_amount),delivery_charges=COALESCE($7,delivery_charges), status=$8 WHERE id=$9 AND user_id=$10 RETURNING *",
-    [null, null, null, null, null, null, null, "cancel", id, req.user.id],
+    "UPDATE orders SET status=$8 WHERE id=$9 AND user_id=$10 RETURNING *",
+    ["cancel", id, req.user.id],
   );
   res.send("status changed");
 };

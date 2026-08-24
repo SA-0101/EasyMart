@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 
 const createProduct = async (req, res, next) => {
   try {
-    const { name, description, image, price } = req.body;
+    const image = req.file.path;
+    const { name, description, price } = req.body;
     console.log(name, description, image, price);
 
     const result = await pool.query(
@@ -35,7 +36,8 @@ const getProducts = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { name, description, image, price } = req.body;
+    const image = req.file.path;
+    const { name, description, price } = req.body;
     console.log(name, description, image, price, id);
     const result = await pool.query(
       "UPDATE products SET name=COALESCE($1,name),description=COALESCE($2,description),image=COALESCE($3,image),price=COALESCE($4,price) WHERE id=$5 RETURNING *",
@@ -172,12 +174,30 @@ const getOrderById = async (req, res, next) => {
   res.status(200).json(result.rows);
 };
 
+const updateStatus = async (req, res, next) => {
+  const { id, status } = req.body;
+  const result = await pool.query(
+    "UPDATE orders SET status=$1 WHERE id=$2 RETURNING *",
+    [status, id],
+  );
+  res.send("Status updated");
+};
+
 const getRiders = async (req, res, next) => {
   const result = await pool.query(
-    "SELECT username,email,role FROM users WHERE role=$1",
+    "SELECT id,username,email,role FROM users WHERE role=$1",
     ["rider"],
   );
   res.status(200).json(result.rows);
+};
+
+const assignRider = async (req, res, next) => {
+  const { order_id, rider_id } = req.body;
+  const result = await pool.query(
+    "UPDATE orders SET rider_id=$1 WHERE id=$2 RETURNING *",
+    [rider_id, order_id],
+  );
+  res.send(result.rows);
 };
 
 module.exports = {
@@ -188,5 +208,7 @@ module.exports = {
   registerAdmin,
   getOrders,
   getOrderById,
+  updateStatus,
   getRiders,
+  assignRider,
 };
