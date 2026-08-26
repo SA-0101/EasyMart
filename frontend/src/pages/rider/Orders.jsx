@@ -76,7 +76,13 @@ export default function RiderOrders() {
                     </span>{" "}
                     · {order.payment_method}
                   </div>
-                  {next ? (
+                  {order.status === "cancel" || order.status === "cancelled" ? (
+                    <span className="text-xs font-semibold text-red-600">
+                      Cancelled — no further action
+                    </span>
+                  ) : order.status === "delivered" ? (
+                    <span className="text-xs font-semibold text-market-600">Delivered ✓</span>
+                  ) : next ? (
                     <button
                       onClick={() => handleAdvance(order)}
                       disabled={busyId === order.id}
@@ -85,7 +91,7 @@ export default function RiderOrders() {
                       {busyId === order.id ? "Updating…" : `Mark as ${next}`}
                     </button>
                   ) : (
-                    <span className="text-xs font-semibold text-market-600">Delivered ✓</span>
+                    <span className="text-xs text-ink/50">Waiting for admin to prepare order</span>
                   )}
                 </div>
               </div>

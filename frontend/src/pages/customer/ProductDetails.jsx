@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { productsApi, cartApi } from "../../services/api";
 import { imageUrl, formatPrice } from "../../services/format";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -23,6 +25,12 @@ export default function ProductDetails() {
   }, [id]);
 
   const handleAddToCart = async () => {
+    if (!user) {
+      navigate("/login", {
+        state: { message: "Please login first to add products to your cart." },
+      });
+      return;
+    }
     setAdding(true);
     setAdded(false);
     try {

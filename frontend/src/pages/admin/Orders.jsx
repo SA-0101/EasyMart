@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { adminApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
+import { orderItemsTotal } from "../../services/orders";
 import StatusPill from "../../components/StatusPill";
 
-const STATUSES = ["pending", "packed", "shipped", "out for delivery", "delivered", "cancelled"];
+// Admin may only move an order between these statuses. Once a rider has
+// taken it further (shipped / out for delivery / delivered), or it has
+// been cancelled, the admin no longer edits it directly here.
+const ADMIN_STATUSES = ["pending", "confirmed", "cancel", "packed"];
+const RIDER_OWNED_STATUSES = ["shipped", "out for delivery", "delivered"];
+
+// Rider assignment only makes sense once the order has been confirmed —
+// not while it's still pending, and not once it's cancelled.
+function canAssignRider(status) {
+  return status !== "pending" && status !== "cancel";
+}
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -61,70 +72,94 @@ export default function AdminOrders() {
         <p className="mt-6 text-ink/60">No orders yet.</p>
       ) : (
         <div className="mt-6 flex flex-col gap-4">
-          {orders.map((order) => (
-            <div key={order.id} className="card p-5">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold">Order #{order.id} — {order.name}</p>
-                  <p className="text-xs text-ink/60">{order.contact}</p>
-                  <p className="text-xs text-ink/60">{order.address}</p>
-                </div>
-                <StatusPill status={order.status} />
-              </div>
+          {orders.map((order) => {
+            const total = orderItemsTotal(order);
+            const isRiderOwned = RIDER_OWNED_STATUSES.includes(order.status);
+            const isCancelled = order.status === "cancel" || order.status === "cancelled";
+            const adminCanEditStatus = !isRiderOwned && !isCancelled;
 
-              {Array.isArray(order.items) && (
-                <div className="mt-4 divide-y divide-market-100 border-t border-market-100">
-                  {order.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between py-2 text-sm">
-                      <span>
-                        {item.name} × {item.quantity}
-                      </span>
-                      <span>{formatPrice(item.price * item.quantity)}</span>
+            return (
+              <div key={order.id} className="card p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold">
+                      Order #{order.id} — {order.name}
+                    </p>
+                    <p className="text-xs text-ink/60">{order.contact}</p>
+                    <p className="text-xs text-ink/60">{order.address}</p>
+                  </div>
+                  <StatusPill status={order.status} />
+                </div>
+
+                {Array.isArray(order.items) && (
+                  <div className="mt-4 divide-y divide-market-100 border-t border-market-100">
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="flex justify-between py-2 text-sm">
+                        <span>
+                          {item.name} × {item.quantity}
+                        </span>
+                        <span>{formatPrice(item.price * item.quantity)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-market-100 pt-3">
+                  <div>
+                    <p className="text-xs text-ink/60">Total</p>
+                    <p className="font-semibold text-market-600">{formatPrice(total)}</p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-semibold uppercase text-ink/50">
+                        Status
+                      </label>
+                      {adminCanEditStatus ? (
+                        <select
+                          className="field !w-auto !py-1.5 text-sm"
+                          value={order.status}
+                          disabled={busyId === order.id}
+                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                        >
+                          {ADMIN_STATUSES.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="text-xs text-ink/50">
+                          {isCancelled ? "Cancelled — locked" : "With rider — locked"}
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
 
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-semibold uppercase text-ink/50">Status</label>
-                  <select
-                    className="field !w-auto !py-1.5 text-sm"
-                    value={order.status}
-                    disabled={busyId === order.id}
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                  >
-                    {STATUSES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-semibold uppercase text-ink/50">
-                    Assign rider
-                  </label>
-                  <select
-                    className="field !w-auto !py-1.5 text-sm"
-                    defaultValue=""
-                    disabled={busyId === order.id}
-                    onChange={(e) => handleAssignRider(order.id, e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Choose rider…
-                    </option>
-                    {riders.map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.username}
-                      </option>
-                    ))}
-                  </select>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-semibold uppercase text-ink/50">
+                        Assign rider
+                      </label>
+                      <select
+                        className="field !w-auto !py-1.5 text-sm"
+                        defaultValue=""
+                        disabled={busyId === order.id || !canAssignRider(order.status)}
+                        onChange={(e) => handleAssignRider(order.id, e.target.value)}
+                      >
+                        <option value="" disabled>
+                          {canAssignRider(order.status) ? "Choose rider…" : "Confirm order first"}
+                        </option>
+                        {riders.map((r) => (
+                          <option key={r.id} value={r.id}>
+                            {r.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

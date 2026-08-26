@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ordersApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
+import { orderItemsTotal } from "../../services/orders";
 import StatusPill from "../../components/StatusPill";
 
 export default function Orders() {
@@ -44,45 +45,55 @@ export default function Orders() {
         <p className="mt-6 text-ink/60">You haven't placed any orders yet.</p>
       ) : (
         <div className="mt-6 flex flex-col gap-4">
-          {orders.map((order) => (
-            <div key={order.id} className="card p-5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <p className="font-semibold">Order #{order.id}</p>
-                  <p className="text-xs text-ink/60">{order.address}</p>
+          {orders.map((order) => {
+            const total = orderItemsTotal(order);
+            return (
+              <div key={order.id} className="card p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold">
+                      Order #{order.id} — {order.name}
+                    </p>
+                    <p className="text-xs text-ink/60">{order.contact}</p>
+                    <p className="text-xs text-ink/60">{order.address}</p>
+                    <p className="mt-1 text-xs font-medium text-ink/70">
+                      Payment: {order.payment_method}
+                    </p>
+                  </div>
+                  <StatusPill status={order.status} />
                 </div>
-                <StatusPill status={order.status} />
-              </div>
 
-              {Array.isArray(order.items) && order.items.length > 0 && (
-                <div className="mt-4 divide-y divide-market-100 border-t border-market-100">
-                  {order.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between py-2 text-sm">
-                      <span>
-                        {item.name} × {item.quantity}
-                      </span>
-                      <span>{formatPrice(item.price * item.quantity)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="mt-4 flex items-center justify-between">
-                <p className="font-semibold text-market-600">
-                  {order.total_amount ? formatPrice(order.total_amount) : ""}
-                </p>
-                {order.status === "pending" && (
-                  <button
-                    onClick={() => handleCancel(order.id)}
-                    disabled={busyId === order.id}
-                    className="btn-danger !px-4 !py-1.5 text-xs"
-                  >
-                    {busyId === order.id ? "Cancelling…" : "Cancel order"}
-                  </button>
+                {Array.isArray(order.items) && order.items.length > 0 && (
+                  <div className="mt-4 divide-y divide-market-100 border-t border-market-100">
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="flex justify-between py-2 text-sm">
+                        <span>
+                          {item.name} × {item.quantity}
+                        </span>
+                        <span>{formatPrice(item.price * item.quantity)}</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
+
+                <div className="mt-4 flex items-center justify-between border-t border-market-100 pt-3">
+                  <div>
+                    <p className="text-xs text-ink/60">Total</p>
+                    <p className="font-semibold text-market-600">{formatPrice(total)}</p>
+                  </div>
+                  {order.status === "pending" && (
+                    <button
+                      onClick={() => handleCancel(order.id)}
+                      disabled={busyId === order.id}
+                      className="btn-danger !px-4 !py-1.5 text-xs"
+                    >
+                      {busyId === order.id ? "Cancelling…" : "Cancel order"}
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

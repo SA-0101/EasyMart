@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { cartApi, ordersApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
+import { groupCartItems, cartGrandTotal } from "../../services/cart";
 
 const DELIVERY_CHARGES = 200;
+const PAYMENT_METHODS = ["Cash", "JazzCash", "Easypaisa"];
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ export default function Checkout() {
     name: "",
     contact: "",
     address: "",
-    payment_method: "COD",
+    payment_method: PAYMENT_METHODS[0],
   });
 
   useEffect(() => {
@@ -26,8 +28,9 @@ export default function Checkout() {
       .finally(() => setLoading(false));
   }, []);
 
-  const subtotal = items.reduce((sum, i) => sum + Number(i.price) * Number(i.quantity), 0);
-  const total = subtotal + (items.length ? DELIVERY_CHARGES : 0);
+  const groupedItems = groupCartItems(items);
+  const subtotal = cartGrandTotal(groupedItems);
+  const total = subtotal + (groupedItems.length ? DELIVERY_CHARGES : 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +40,7 @@ export default function Checkout() {
       await ordersApi.place({
         ...form,
         total_amount: total,
-        delivery_charges: items.length ? DELIVERY_CHARGES : 0,
+        delivery_charges: groupedItems.length ? DELIVERY_CHARGES : 0,
       });
       navigate("/customer/orders");
     } catch (err) {
@@ -112,10 +115,22 @@ export default function Checkout() {
           />
         </div>
         <div>
-          <label className="label">Payment method</label>
-          <div className="rounded-xl border border-market-200 bg-market-50 px-4 py-2.5 text-sm">
-            Cash on Delivery (COD)
-          </div>
+          <label className="label" htmlFor="payment_method">
+            Payment method
+          </label>
+          <select
+            id="payment_method"
+            required
+            className="field"
+            value={form.payment_method}
+            onChange={(e) => setForm((f) => ({ ...f, payment_method: e.target.value }))}
+          >
+            {PAYMENT_METHODS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="mt-2 rounded-xl bg-market-50 p-4 text-sm">

@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { productsApi, cartApi } from "../../services/api";
 import { imageUrl, formatPrice } from "../../services/format";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ProductList() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -44,6 +47,12 @@ export default function ProductList() {
   };
 
   const handleAddToCart = async (p) => {
+    if (!user) {
+      navigate("/login", {
+        state: { message: "Please login first to add products to your cart." },
+      });
+      return;
+    }
     setAddingId(p.id);
     try {
       await cartApi.add({

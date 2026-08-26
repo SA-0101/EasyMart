@@ -13,6 +13,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   const from = location.state?.from?.pathname;
+  const infoMessage = location.state?.message;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +35,12 @@ export default function Login() {
     <div className="mx-auto flex max-w-md flex-col px-4 py-16 sm:px-6">
       <h1 className="font-display text-3xl font-semibold">Welcome back</h1>
       <p className="mt-1 text-sm text-ink/60">Log in to continue to Easy Mart.</p>
+
+      {infoMessage && (
+        <div className="mt-4 rounded-xl bg-mango-100 px-4 py-3 text-sm font-medium text-mango-600">
+          {infoMessage}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="card mt-8 flex flex-col gap-4 p-6">
         <div>
