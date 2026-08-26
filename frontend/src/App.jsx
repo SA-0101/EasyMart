@@ -17,6 +17,7 @@ import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
 import AdminUsers from "./pages/admin/Users";
 import AdminRiders from "./pages/admin/Riders";
+import AdminRegister from "./pages/admin/AdminRegister";
 
 import RiderOrders from "./pages/rider/Orders";
 
@@ -92,6 +93,14 @@ export default function App() {
             element={
               <ProtectedRoute role="admin">
                 <AdminRiders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/register"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminRegister />
               </ProtectedRoute>
             }
           />

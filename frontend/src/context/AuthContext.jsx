@@ -20,10 +20,21 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // On first load, try a silent refresh so a returning user (who still has
-  // the http-only refresh cookie) doesn't have to log in again.
+  // On first load: if a token already survived in localStorage, restore the
+  // session from it immediately (no network round-trip, no flash of logged
+  // -out UI). Only fall back to a silent /api/refresh — using the httpOnly
+  // refresh cookie — when there's no local token at all. The user is only
+  // signed out if neither of those can restore a session.
   useEffect(() => {
     let cancelled = false;
+
+    const existingToken = getAccessToken();
+    if (existingToken) {
+      setUser(userFromToken(existingToken));
+      setLoading(false);
+      return;
+    }
+
     (async () => {
       try {
         const data = await authApi.refresh();
@@ -40,6 +51,7 @@ export function AuthProvider({ children }) {
         if (!cancelled) setLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ordersApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
-import { orderItemsTotal } from "../../services/orders";
+import { orderBreakdown } from "../../services/orders";
 import StatusPill from "../../components/StatusPill";
 
 export default function Orders() {
@@ -46,7 +46,7 @@ export default function Orders() {
       ) : (
         <div className="mt-6 flex flex-col gap-4">
           {orders.map((order) => {
-            const total = orderItemsTotal(order);
+            const { subtotal, deliveryCharges, total } = orderBreakdown(order);
             return (
               <div key={order.id} className="card p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -77,9 +77,17 @@ export default function Orders() {
                 )}
 
                 <div className="mt-4 flex items-center justify-between border-t border-market-100 pt-3">
-                  <div>
-                    <p className="text-xs text-ink/60">Total</p>
-                    <p className="font-semibold text-market-600">{formatPrice(total)}</p>
+                  <div className="space-y-0.5 text-xs text-ink/60">
+                    <p>
+                      Subtotal: <span className="text-ink/80">{formatPrice(subtotal)}</span>
+                    </p>
+                    <p>
+                      Delivery Charges:{" "}
+                      <span className="text-ink/80">{formatPrice(deliveryCharges)}</span>
+                    </p>
+                    <p className="font-semibold text-market-600">
+                      Total Amount: {formatPrice(total)}
+                    </p>
                   </div>
                   {order.status === "pending" && (
                     <button

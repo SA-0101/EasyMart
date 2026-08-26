@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { cartApi, ordersApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
 import { groupCartItems, cartGrandTotal } from "../../services/cart";
+import { DELIVERY_CHARGES } from "../../services/constants";
 
-const DELIVERY_CHARGES = 200;
 const PAYMENT_METHODS = ["Cash", "JazzCash", "Easypaisa"];
 
 export default function Checkout() {
@@ -143,7 +143,7 @@ export default function Checkout() {
             <span>{formatPrice(DELIVERY_CHARGES)}</span>
           </div>
           <div className="mt-1 flex justify-between border-t border-market-200 pt-1 font-semibold">
-            <span>Total</span>
+            <span>Total Amount</span>
             <span>{formatPrice(total)}</span>
           </div>
         </div>

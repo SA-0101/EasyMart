@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { cartApi } from "../../services/api";
 import { imageUrl, formatPrice } from "../../services/format";
 import { groupCartItems, cartGrandTotal } from "../../services/cart";
+import { DELIVERY_CHARGES } from "../../services/constants";
 
 export default function Cart() {
   const [items, setItems] = useState([]);
@@ -48,8 +49,11 @@ export default function Cart() {
   };
 
   // itemTotal = price × quantity, for each combined product card.
-  // grandTotal = sum of every item's itemTotal. Nothing here is hard-coded.
-  const grandTotal = cartGrandTotal(groupedItems);
+  // subtotal = sum of every item's itemTotal.
+  // totalAmount = subtotal + delivery charges. Nothing here is hard-coded.
+  const subtotal = cartGrandTotal(groupedItems);
+  const deliveryCharges = groupedItems.length ? DELIVERY_CHARGES : 0;
+  const totalAmount = subtotal + deliveryCharges;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -104,14 +108,24 @@ export default function Cart() {
             })}
           </div>
 
-          <div className="card flex items-center justify-between p-5">
-            <div>
-              <p className="text-sm text-ink/60">Grand total</p>
-              <p className="text-xl font-semibold">{formatPrice(grandTotal)}</p>
+          <div className="card flex flex-col gap-3 p-5">
+            <div className="flex justify-between text-sm text-ink/70">
+              <span>Subtotal</span>
+              <span>{formatPrice(subtotal)}</span>
             </div>
-            <button onClick={() => navigate("/customer/checkout")} className="btn-primary">
-              Checkout
-            </button>
+            <div className="flex justify-between text-sm text-ink/70">
+              <span>Delivery Charges</span>
+              <span>{formatPrice(deliveryCharges)}</span>
+            </div>
+            <div className="flex items-center justify-between border-t border-market-100 pt-3">
+              <div>
+                <p className="text-sm text-ink/60">Total Amount</p>
+                <p className="text-xl font-semibold">{formatPrice(totalAmount)}</p>
+              </div>
+              <button onClick={() => navigate("/customer/checkout")} className="btn-primary">
+                Checkout
+              </button>
+            </div>
           </div>
         </div>
       )}

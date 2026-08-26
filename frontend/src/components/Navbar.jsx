@@ -38,6 +38,7 @@ export default function Navbar() {
       { to: "/admin/orders", label: "Orders" },
       { to: "/admin/riders", label: "Riders" },
       { to: "/admin/users", label: "Users" },
+      { to: "/admin/register", label: "Add Admin" },
     ],
     rider: [{ to: "/rider/orders", label: "My Deliveries" }],
   };
@@ -48,12 +49,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-market-100 bg-cream/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-market-600 font-display text-lg font-bold text-cream">
-            E
-          </span>
-          <span className="font-display text-xl font-semibold tracking-tight text-ink">
-            Easy Mart
-          </span>
+          <img src="/easy-mart-logo.png" alt="Easy Mart" className="h-9 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

@@ -4,7 +4,7 @@
 
 const BASE_URL = "http://localhost:3000";
 
-const ACCESS_TOKEN_KEY = "easy_mart_access_token";
+const ACCESS_TOKEN_KEY = "access_token";
 
 export function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);

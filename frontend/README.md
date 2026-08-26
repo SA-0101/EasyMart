@@ -80,6 +80,30 @@ The app expects the backend to be running at `http://localhost:3000`
     once `cancel`led, matching "delivery processing only starts after
     confirmation."
 
+## Change log (v2 request)
+
+- **Admin registration** — new `/admin/register` page (admin-only route,
+  linked from the admin nav as "Add Admin") posts to
+  `POST /api/admin/register` with `role` hard-coded to `"admin"`.
+- **Access token persistence across refresh** — the localStorage key is now
+  literally `access_token`. On app start, `AuthContext` checks localStorage
+  first and restores the session from it immediately with no network call;
+  it only falls back to a silent `GET /api/refresh` (with
+  `credentials: "include"`) when there's no local token at all, and only
+  clears the session if that refresh also fails. This avoids the previous
+  behavior of always hitting `/refresh` on load, which could log out a user
+  who already had a perfectly good token.
+- **Total amount calculation** — `src/services/constants.js` holds the one
+  `DELIVERY_CHARGES` value, and `src/services/orders.js` exports
+  `orderBreakdown(order)` → `{ subtotal, deliveryCharges, total }`, computed
+  as `subtotal = Σ(price × quantity)` and `total = subtotal + deliveryCharges`.
+  Cart, Checkout, "My Orders", and "All orders" (admin) all now display
+  Subtotal / Delivery Charges / Total Amount using these shared helpers —
+  nothing is hard-coded per order.
+- **Logo** — the navbar now renders the provided `easy-mart-logo.png`
+  (copied into `public/`) instead of the text/circle logo. Layout and
+  sizing preserved.
+
 ## Notes / assumptions made
 
 - **Delivery charge** is hard-coded to `200` at checkout (matching the

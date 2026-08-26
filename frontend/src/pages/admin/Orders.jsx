@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { adminApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
-import { orderItemsTotal } from "../../services/orders";
+import { orderBreakdown } from "../../services/orders";
 import StatusPill from "../../components/StatusPill";
 
 // Admin may only move an order between these statuses. Once a rider has
@@ -73,7 +73,7 @@ export default function AdminOrders() {
       ) : (
         <div className="mt-6 flex flex-col gap-4">
           {orders.map((order) => {
-            const total = orderItemsTotal(order);
+            const { subtotal, deliveryCharges, total } = orderBreakdown(order);
             const isRiderOwned = RIDER_OWNED_STATUSES.includes(order.status);
             const isCancelled = order.status === "cancel" || order.status === "cancelled";
             const adminCanEditStatus = !isRiderOwned && !isCancelled;
@@ -105,9 +105,17 @@ export default function AdminOrders() {
                 )}
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-market-100 pt-3">
-                  <div>
-                    <p className="text-xs text-ink/60">Total</p>
-                    <p className="font-semibold text-market-600">{formatPrice(total)}</p>
+                  <div className="space-y-0.5 text-xs text-ink/60">
+                    <p>
+                      Subtotal: <span className="text-ink/80">{formatPrice(subtotal)}</span>
+                    </p>
+                    <p>
+                      Delivery Charges:{" "}
+                      <span className="text-ink/80">{formatPrice(deliveryCharges)}</span>
+                    </p>
+                    <p className="font-semibold text-market-600">
+                      Total Amount: {formatPrice(total)}
+                    </p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">
