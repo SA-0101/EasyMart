@@ -23,19 +23,19 @@ app.use(cookieParser());
 app.use(cors(corsFunc()));
 
 //User APIs
-app.use("/users", token_auth, userRoutes);
+app.use("/api/users", token_auth, userRoutes);
 //Auth APIs
-app.use("/", authRoutes);
+app.use("/api", authRoutes);
 //admin access APIs
-app.use("/admin", adminRoutes);
+app.use("/api/admin", adminRoutes);
 //product APIs
-app.use("/products", productRoutes);
+app.use("/api/products", productRoutes);
 //cart APIs
-app.use("/cart", token_auth, cartRoutes);
+app.use("/api/cart", token_auth, cartRoutes);
 //order APIs
-app.use("/orders", token_auth, orderRoutes);
+app.use("/api/orders", token_auth, orderRoutes);
 //rider APIs
-app.use("/riders", token_auth, riderRoutes);
+app.use("/api/riders", token_auth, riderRoutes);
 
 app.use(error_middleware);
 app.listen(3000, () => {

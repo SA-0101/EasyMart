@@ -31,7 +31,6 @@ const getProductsByName = async (req, res, next) => {
       return next(err);
     }
     const searchTerm = `%${name}%`;
-    console.log("name of query parameter is ", name);
     const result = await pool.query(
       "SELECT * FROM products WHERE name LIKE $1",
       [searchTerm],

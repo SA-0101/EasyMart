@@ -1,7 +1,6 @@
 const pool = require("../db/db");
 
 const getOrders = async (req, res, next) => {
-  console.log(req.user.id);
   const result = await pool.query("SELECT * FROM orders WHERE rider_id=$1", [
     req.user.id,
   ]);
@@ -11,11 +10,7 @@ const getOrders = async (req, res, next) => {
 const updateStatus = async (req, res, next) => {
   const { id, status } = req.body;
   const allowedStatus = ["packed", "shipped", "out for delivery", "delivered"];
-  err = {
-    status: 404,
-    message: "order not found",
-  };
-  return next(err);
+
   if (!allowedStatus.includes(status)) {
     err = {
       status: 400,

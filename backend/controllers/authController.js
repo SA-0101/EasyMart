@@ -48,7 +48,6 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     const { email, password, role } = req.body;
-    console.log(email, password);
     if (!email || !password) {
       const err = {
         status: 400,

@@ -23,7 +23,6 @@ const placeOrder = async (req, res, next) => {
       rider_id,
     ],
   );
-  console.log("this is result of order table ", result.rows);
   const result2 = await pool.query(
     `INSERT INTO order_items (order_id,product_id,name,description,image,price,quantity) 
     SELECT $1,product_id,name,description,image,price,quantity
@@ -32,7 +31,6 @@ const placeOrder = async (req, res, next) => {
     RETURNING *`,
     [result.rows[0].id, req.user.id],
   );
-  console.log("this is result from cart to cart items ", result2.rows);
   res.send("order placed");
 };
 
@@ -69,7 +67,7 @@ const getOrders = async (req, res, next) => {
 const cancelOrder = async (req, res, next) => {
   const id = req.params.id;
   const result = pool.query(
-    "UPDATE orders SET status=$8 WHERE id=$9 AND user_id=$10 RETURNING *",
+    "UPDATE orders SET status=$1 WHERE id=$2 AND user_id=$3 RETURNING *",
     ["cancel", id, req.user.id],
   );
   res.send("status changed");

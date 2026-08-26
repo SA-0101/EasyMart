@@ -3,7 +3,6 @@ const pool = require("./../db/db");
 const addProduct = async (req, res, next) => {
   try {
     const { product_id, name, description, image, price, quantity } = req.body;
-    console.log(product_id, name, description, image, price, quantity);
 
     const result = await pool.query(
       "INSERT INTO cart (user_id,product_id,name,description,image,price,quantity) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *",
