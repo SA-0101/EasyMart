@@ -1,1 +1,46 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-cream text-ink font-body antialiased;
+}
+
+h1, h2, h3, h4 {
+  @apply font-display;
+}
+
+::selection {
+  @apply bg-mango-300 text-ink;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-market-600 px-5 py-2.5 text-sm font-semibold text-cream transition hover:bg-market-700 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-market-600 bg-transparent px-5 py-2.5 text-sm font-semibold text-market-700 transition hover:bg-market-50 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-mango {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-mango-400 px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-mango-500 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .field {
+    @apply w-full rounded-xl border border-market-200 bg-white px-4 py-2.5 text-sm text-ink placeholder:text-ink/40 focus:border-market-500 focus:outline-none focus:ring-2 focus:ring-market-100;
+  }
+  .card {
+    @apply rounded-xl2 border border-market-100 bg-white shadow-sm;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-market-700/70;
+  }
+  .pill {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide;
+  }
+}
