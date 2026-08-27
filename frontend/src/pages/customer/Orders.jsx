@@ -39,7 +39,7 @@ export default function Orders() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold">My orders</h1>
+      <h1 className="font-sans text-3xl font-semibold">My orders</h1>
 
       {error && <ErrorBanner message={error} className="mt-4" />}
 
@@ -81,7 +81,10 @@ export default function Orders() {
                 {Array.isArray(order.items) && order.items.length > 0 && (
                   <div className="mt-4 divide-y divide-market-100 border-t border-market-100">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex justify-between py-2 text-sm">
+                      <div
+                        key={idx}
+                        className="flex justify-between py-2 text-sm"
+                      >
                         <span>
                           {item.name} × {item.quantity}
                         </span>
@@ -94,11 +97,16 @@ export default function Orders() {
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-market-100 pt-3">
                   <div className="space-y-0.5 text-xs text-ink/60">
                     <p>
-                      Subtotal: <span className="text-ink/80">{formatPrice(subtotal)}</span>
+                      Subtotal:{" "}
+                      <span className="text-ink/80">
+                        {formatPrice(subtotal)}
+                      </span>
                     </p>
                     <p>
                       Delivery Charges:{" "}
-                      <span className="text-ink/80">{formatPrice(deliveryCharges)}</span>
+                      <span className="text-ink/80">
+                        {formatPrice(deliveryCharges)}
+                      </span>
                     </p>
                     <p className="font-semibold text-market-600">
                       Total Amount: {formatPrice(total)}
@@ -110,7 +118,8 @@ export default function Orders() {
                       disabled={busyId === order.id}
                       className="btn-danger !px-4 !py-1.5 text-xs"
                     >
-                      <X size={13} /> {busyId === order.id ? "Cancelling…" : "Cancel order"}
+                      <X size={13} />{" "}
+                      {busyId === order.id ? "Cancelling…" : "Cancel order"}
                     </button>
                   )}
                 </div>

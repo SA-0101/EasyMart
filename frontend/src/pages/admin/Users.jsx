@@ -27,7 +27,7 @@ export default function AdminUsers() {
   const filtered = users.filter(
     (u) =>
       u.username?.toLowerCase().includes(query.toLowerCase()) ||
-      u.email?.toLowerCase().includes(query.toLowerCase())
+      u.email?.toLowerCase().includes(query.toLowerCase()),
   );
 
   return (
@@ -37,10 +37,13 @@ export default function AdminUsers() {
           <span className="grid h-11 w-11 place-items-center rounded-full bg-market-100 text-market-600">
             <Users size={20} />
           </span>
-          <h1 className="font-display text-3xl font-semibold">All users</h1>
+          <h1 className="font-sans text-3xl font-semibold">All users</h1>
         </div>
         <div className="relative w-full max-w-xs">
-          <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+          />
           <input
             className="field !pl-9"
             placeholder="Search by name or email…"
@@ -66,7 +69,10 @@ export default function AdminUsers() {
             </thead>
             <tbody className="divide-y divide-market-100">
               {filtered.map((u) => (
-                <tr key={u.id} className="transition-colors hover:bg-market-50/60">
+                <tr
+                  key={u.id}
+                  className="transition-colors hover:bg-market-50/60"
+                >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <span
@@ -81,7 +87,9 @@ export default function AdminUsers() {
                   </td>
                   <td className="px-4 py-3 text-ink/70">{u.email}</td>
                   <td className="px-4 py-3">
-                    <span className={`pill ${roleStyle[u.role] || "bg-ink/10 text-ink/70"}`}>
+                    <span
+                      className={`pill ${roleStyle[u.role] || "bg-ink/10 text-ink/70"}`}
+                    >
                       {u.role}
                     </span>
                   </td>

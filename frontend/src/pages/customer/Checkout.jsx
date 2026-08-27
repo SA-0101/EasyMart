@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Phone, MapPin, Wallet, ShoppingBag, ArrowRight } from "lucide-react";
+import {
+  User,
+  Phone,
+  MapPin,
+  Wallet,
+  ShoppingBag,
+  ArrowRight,
+} from "lucide-react";
 import { cartApi, ordersApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
 import { groupCartItems, cartGrandTotal } from "../../services/cart";
@@ -70,7 +77,10 @@ export default function Checkout() {
           title="Nothing to check out"
           message="Your cart is empty — add a few products first."
           action={
-            <button onClick={() => navigate("/customer/products")} className="btn-primary mt-1">
+            <button
+              onClick={() => navigate("/customer/products")}
+              className="btn-primary mt-1"
+            >
               Browse products
             </button>
           }
@@ -81,18 +91,25 @@ export default function Checkout() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold">Checkout</h1>
+      <h1 className="font-sans text-3xl font-semibold">Checkout</h1>
       <p className="mt-1 text-sm text-ink/60">
-        Delivery details for this order. Order items are pulled from your current cart.
+        Delivery details for this order. Order items are pulled from your
+        current cart.
       </p>
 
-      <form onSubmit={handleSubmit} className="card mt-8 flex flex-col gap-4 p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="card mt-8 flex flex-col gap-4 p-6"
+      >
         <div>
           <label className="label" htmlFor="name">
             Full name
           </label>
           <div className="relative">
-            <User size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <User
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="name"
               required
@@ -107,14 +124,19 @@ export default function Checkout() {
             Contact number
           </label>
           <div className="relative">
-            <Phone size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Phone
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="contact"
               required
               className="field !pl-9"
               placeholder="03XXXXXXXXX"
               value={form.contact}
-              onChange={(e) => setForm((f) => ({ ...f, contact: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, contact: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -123,7 +145,10 @@ export default function Checkout() {
             Delivery address
           </label>
           <div className="relative">
-            <MapPin size={16} className="pointer-events-none absolute left-3.5 top-3.5 text-ink/40" />
+            <MapPin
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-3.5 text-ink/40"
+            />
             <textarea
               id="address"
               required
@@ -131,7 +156,9 @@ export default function Checkout() {
               className="field !pl-9"
               placeholder="House, street, tehsil, district"
               value={form.address}
-              onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, address: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -140,13 +167,18 @@ export default function Checkout() {
             Payment method
           </label>
           <div className="relative">
-            <Wallet size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Wallet
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <select
               id="payment_method"
               required
               className="field !pl-9"
               value={form.payment_method}
-              onChange={(e) => setForm((f) => ({ ...f, payment_method: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, payment_method: e.target.value }))
+              }
             >
               {PAYMENT_METHODS.map((m) => (
                 <option key={m} value={m}>
@@ -174,8 +206,13 @@ export default function Checkout() {
 
         {error && <ErrorBanner message={error} />}
 
-        <button type="submit" disabled={submitting} className="btn-primary mt-2">
-          {submitting ? "Placing order…" : "Place order"} <ArrowRight size={16} />
+        <button
+          type="submit"
+          disabled={submitting}
+          className="btn-primary mt-2"
+        >
+          {submitting ? "Placing order…" : "Place order"}{" "}
+          <ArrowRight size={16} />
         </button>
       </form>
     </div>

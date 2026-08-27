@@ -12,7 +12,12 @@ const ROLES = ["customer", "rider"];
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ username: "", email: "", password: "", role: "customer" });
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "customer",
+  });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -37,12 +42,17 @@ export default function Register() {
       <div className="flex justify-center">
         <Logo iconClassName="h-12 w-12" />
       </div>
-      <h1 className="mt-6 text-center font-display text-3xl font-semibold">Create your account</h1>
+      <h1 className="mt-6 text-center font-sans text-3xl font-semibold">
+        Create your account
+      </h1>
       <p className="mt-1 text-center text-sm text-ink/60">
         Sign up as a customer to shop, or as a rider to deliver.
       </p>
 
-      <form onSubmit={handleSubmit} className="card mt-8 flex flex-col gap-4 p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="card mt-8 flex flex-col gap-4 p-6"
+      >
         <div>
           <label className="label">Account type</label>
           <div className="grid grid-cols-2 gap-2">
@@ -68,14 +78,19 @@ export default function Register() {
             Username
           </label>
           <div className="relative">
-            <User size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <User
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="username"
               required
               className="field !pl-9"
               placeholder="Your name"
               value={form.username}
-              onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, username: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -85,7 +100,10 @@ export default function Register() {
             Email
           </label>
           <div className="relative">
-            <Mail size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Mail
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="email"
               type="email"
@@ -93,7 +111,9 @@ export default function Register() {
               className="field !pl-9"
               placeholder="you@example.com"
               value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, email: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -103,7 +123,10 @@ export default function Register() {
             Password
           </label>
           <div className="relative">
-            <Lock size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Lock
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="password"
               type="password"
@@ -112,7 +135,9 @@ export default function Register() {
               className="field !pl-9"
               placeholder="At least 6 characters"
               value={form.password}
-              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, password: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -124,7 +149,11 @@ export default function Register() {
           </p>
         )}
 
-        <button type="submit" disabled={submitting} className="btn-primary mt-2">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="btn-primary mt-2"
+        >
           <UserPlus size={16} />
           {submitting ? "Creating account…" : "Sign up"}
         </button>
@@ -132,7 +161,10 @@ export default function Register() {
 
       <p className="mt-6 text-center text-sm text-ink/60">
         Already have an account?{" "}
-        <Link to="/login" className="font-semibold text-market-600 hover:underline">
+        <Link
+          to="/login"
+          className="font-semibold text-market-600 hover:underline"
+        >
           Log in
         </Link>
       </p>

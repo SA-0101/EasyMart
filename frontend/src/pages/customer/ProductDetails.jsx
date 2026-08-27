@@ -84,7 +84,7 @@ export default function ProductDetails() {
           className="h-72 w-full rounded-xl object-cover"
         />
         <div className="flex flex-col">
-          <h1 className="font-display text-2xl font-semibold">{product.name}</h1>
+          <h1 className="font-sans text-2xl font-semibold">{product.name}</h1>
           <p className="mt-2 text-ink/70">{product.description}</p>
           <p className="mt-4 text-2xl font-semibold text-market-600">
             {formatPrice(product.price)}
@@ -124,7 +124,11 @@ export default function ProductDetails() {
             </p>
           )}
 
-          <button onClick={handleAddToCart} disabled={adding} className="btn-primary mt-6 w-fit">
+          <button
+            onClick={handleAddToCart}
+            disabled={adding}
+            className="btn-primary mt-6 w-fit"
+          >
             <ShoppingBag size={16} />
             {adding ? "Adding…" : "Add to cart"}
           </button>

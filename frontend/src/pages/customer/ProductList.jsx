@@ -73,7 +73,7 @@ export default function ProductList() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="font-display text-3xl font-semibold">Shop the mart</h1>
+        <h1 className="font-sans text-3xl font-semibold">Shop the mart</h1>
         <form onSubmit={handleSearch} className="flex w-full max-w-sm gap-2">
           <div className="relative flex-1">
             <Search
@@ -112,46 +112,44 @@ export default function ProductList() {
             >
               <Link
                 to={`/customer/products/${p.id}`}
-                className="block overflow-hidden"
+                className="relative block aspect-square overflow-hidden bg-market-50"
               >
                 <img
                   src={imageUrl(p.image)}
                   alt={p.name}
-                  className="h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105 sm:h-40"
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
+                <span className="absolute left-2.5 top-2.5 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-market-700 shadow-sm">
+                  {formatPrice(p.price)}
+                </span>
               </Link>
               <div className="flex flex-1 flex-col p-4">
                 <Link
                   to={`/customer/products/${p.id}`}
-                  className="font-semibold text-ink transition-colors hover:text-market-700"
+                  className="line-clamp-1 font-semibold text-ink transition-colors hover:text-market-700"
                 >
                   {p.name}
                 </Link>
                 <p className="mt-1 line-clamp-2 flex-1 text-xs text-ink/60">
                   {p.description}
                 </p>
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="font-semibold text-market-600">
-                    {formatPrice(p.price)}
-                  </span>
-                  <button
-                    onClick={() => handleAddToCart(p)}
-                    disabled={addingId === p.id}
-                    className={`!px-3 !py-1.5 text-xs ${addedId === p.id ? "btn-primary" : "btn-mango"}`}
-                  >
-                    {addedId === p.id ? (
-                      <>
-                        <Check size={14} /> Added
-                      </>
-                    ) : addingId === p.id ? (
-                      "Adding…"
-                    ) : (
-                      <>
-                        <ShoppingBag size={14} /> Add
-                      </>
-                    )}
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleAddToCart(p)}
+                  disabled={addingId === p.id}
+                  className={`mt-3 w-full justify-center !py-2 text-xs ${addedId === p.id ? "btn-primary" : "btn-mango"}`}
+                >
+                  {addedId === p.id ? (
+                    <>
+                      <Check size={14} /> Added to cart
+                    </>
+                  ) : addingId === p.id ? (
+                    "Adding…"
+                  ) : (
+                    <>
+                      <ShoppingBag size={14} /> Add to cart
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           ))}

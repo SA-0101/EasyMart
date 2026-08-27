@@ -25,8 +25,10 @@ export default function AdminRiders() {
           <Bike size={20} />
         </span>
         <div>
-          <h1 className="font-display text-3xl font-semibold">Riders</h1>
-          <p className="text-sm text-ink/60">Riders can be assigned to orders from the Orders page.</p>
+          <h1 className="font-sans text-3xl font-semibold">Riders</h1>
+          <p className="text-sm text-ink/60">
+            Riders can be assigned to orders from the Orders page.
+          </p>
         </div>
       </div>
 
@@ -46,8 +48,11 @@ export default function AdminRiders() {
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {riders.map((r) => (
-            <div key={r.id} className="card card-hover flex items-center gap-4 p-4">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-indigo-100 font-display text-lg font-semibold text-indigo-700">
+            <div
+              key={r.id}
+              className="card card-hover flex items-center gap-4 p-4"
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-indigo-100 font-sans text-lg font-semibold text-indigo-700">
                 {r.username?.[0]?.toUpperCase() || "R"}
               </span>
               <div className="min-w-0">

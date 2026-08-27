@@ -44,7 +44,9 @@ export default function AdminOrders() {
     setBusyId(id);
     try {
       await adminApi.updateOrderStatus(id, status);
-      setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
+      setOrders((prev) =>
+        prev.map((o) => (o.id === id ? { ...o, status } : o)),
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -70,7 +72,7 @@ export default function AdminOrders() {
         <span className="grid h-11 w-11 place-items-center rounded-full bg-market-100 text-market-600">
           <ClipboardList size={20} />
         </span>
-        <h1 className="font-display text-3xl font-semibold">All orders</h1>
+        <h1 className="font-sans text-3xl font-semibold">All orders</h1>
       </div>
 
       {error && <ErrorBanner message={error} className="mt-4" />}
@@ -91,7 +93,8 @@ export default function AdminOrders() {
           {orders.map((order) => {
             const { subtotal, deliveryCharges, total } = orderBreakdown(order);
             const isRiderOwned = RIDER_OWNED_STATUSES.includes(order.status);
-            const isCancelled = order.status === "cancel" || order.status === "cancelled";
+            const isCancelled =
+              order.status === "cancel" || order.status === "cancelled";
             const adminCanEditStatus = !isRiderOwned && !isCancelled;
 
             return (
@@ -112,7 +115,10 @@ export default function AdminOrders() {
                 {Array.isArray(order.items) && (
                   <div className="mt-4 divide-y divide-market-100 border-t border-market-100">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex justify-between py-2 text-sm">
+                      <div
+                        key={idx}
+                        className="flex justify-between py-2 text-sm"
+                      >
                         <span>
                           {item.name} × {item.quantity}
                         </span>
@@ -125,11 +131,16 @@ export default function AdminOrders() {
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-market-100 pt-3">
                   <div className="space-y-0.5 text-xs text-ink/60">
                     <p>
-                      Subtotal: <span className="text-ink/80">{formatPrice(subtotal)}</span>
+                      Subtotal:{" "}
+                      <span className="text-ink/80">
+                        {formatPrice(subtotal)}
+                      </span>
                     </p>
                     <p>
                       Delivery Charges:{" "}
-                      <span className="text-ink/80">{formatPrice(deliveryCharges)}</span>
+                      <span className="text-ink/80">
+                        {formatPrice(deliveryCharges)}
+                      </span>
                     </p>
                     <p className="font-semibold text-market-600">
                       Total Amount: {formatPrice(total)}
@@ -146,7 +157,9 @@ export default function AdminOrders() {
                           className="field !w-auto !py-1.5 text-sm"
                           value={order.status}
                           disabled={busyId === order.id}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          onChange={(e) =>
+                            handleStatusChange(order.id, e.target.value)
+                          }
                         >
                           {ADMIN_STATUSES.map((s) => (
                             <option key={s} value={s}>
@@ -157,7 +170,9 @@ export default function AdminOrders() {
                       ) : (
                         <span className="flex items-center gap-1 text-xs text-ink/50">
                           <Lock size={12} />
-                          {isCancelled ? "Cancelled — locked" : "With rider — locked"}
+                          {isCancelled
+                            ? "Cancelled — locked"
+                            : "With rider — locked"}
                         </span>
                       )}
                     </div>
@@ -169,11 +184,17 @@ export default function AdminOrders() {
                       <select
                         className="field !w-auto !py-1.5 text-sm"
                         defaultValue=""
-                        disabled={busyId === order.id || !canAssignRider(order.status)}
-                        onChange={(e) => handleAssignRider(order.id, e.target.value)}
+                        disabled={
+                          busyId === order.id || !canAssignRider(order.status)
+                        }
+                        onChange={(e) =>
+                          handleAssignRider(order.id, e.target.value)
+                        }
                       >
                         <option value="" disabled>
-                          {canAssignRider(order.status) ? "Choose rider…" : "Confirm order first"}
+                          {canAssignRider(order.status)
+                            ? "Choose rider…"
+                            : "Confirm order first"}
                         </option>
                         {riders.map((r) => (
                           <option key={r.id} value={r.id}>

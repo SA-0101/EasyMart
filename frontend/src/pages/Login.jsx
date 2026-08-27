@@ -11,7 +11,11 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [form, setForm] = useState({ email: "", password: "", role: "customer" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    role: "customer",
+  });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -25,7 +29,11 @@ export default function Login() {
     try {
       const user = await login(form);
       const fallback =
-        user.role === "admin" ? "/admin/products" : user.role === "rider" ? "/rider/orders" : "/customer/products";
+        user.role === "admin"
+          ? "/admin/products"
+          : user.role === "rider"
+            ? "/rider/orders"
+            : "/customer/products";
       navigate(from || fallback, { replace: true });
     } catch (err) {
       setError(err.message || "Login failed. Check your credentials.");
@@ -39,8 +47,12 @@ export default function Login() {
       <div className="flex justify-center">
         <Logo iconClassName="h-12 w-12" />
       </div>
-      <h1 className="mt-6 text-center font-display text-3xl font-semibold">Welcome back</h1>
-      <p className="mt-1 text-center text-sm text-ink/60">Log in to continue to Easy Mart.</p>
+      <h1 className="mt-6 text-center font-sans text-3xl font-semibold">
+        Welcome back
+      </h1>
+      <p className="mt-1 text-center text-sm text-ink/60">
+        Log in to continue to Easy Mart.
+      </p>
 
       {infoMessage && (
         <div className="mt-4 flex items-start gap-2 rounded-xl bg-mango-100 px-4 py-3 text-sm font-medium text-mango-600">
@@ -49,7 +61,10 @@ export default function Login() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="card mt-8 flex flex-col gap-4 p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="card mt-8 flex flex-col gap-4 p-6"
+      >
         <div>
           <label className="label">I am a</label>
           <div className="grid grid-cols-3 gap-2">
@@ -75,7 +90,10 @@ export default function Login() {
             Email
           </label>
           <div className="relative">
-            <Mail size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Mail
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="email"
               type="email"
@@ -83,7 +101,9 @@ export default function Login() {
               className="field !pl-9"
               placeholder="you@example.com"
               value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, email: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -93,7 +113,10 @@ export default function Login() {
             Password
           </label>
           <div className="relative">
-            <Lock size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Lock
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="password"
               type="password"
@@ -101,14 +124,20 @@ export default function Login() {
               className="field !pl-9"
               placeholder="••••••••"
               value={form.password}
-              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, password: e.target.value }))
+              }
             />
           </div>
         </div>
 
         {error && <ErrorBanner message={error} />}
 
-        <button type="submit" disabled={submitting} className="btn-primary mt-2">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="btn-primary mt-2"
+        >
           <LogIn size={16} />
           {submitting ? "Logging in…" : "Log in"}
         </button>
@@ -116,7 +145,10 @@ export default function Login() {
 
       <p className="mt-6 text-center text-sm text-ink/60">
         New to Easy Mart?{" "}
-        <Link to="/register" className="font-semibold text-market-600 hover:underline">
+        <Link
+          to="/register"
+          className="font-semibold text-market-600 hover:underline"
+        >
           Create an account
         </Link>
       </p>

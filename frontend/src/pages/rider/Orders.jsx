@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Bike, Phone, MapPin, Wallet, CheckCircle2, XCircle, Clock3 } from "lucide-react";
+import {
+  Bike,
+  Phone,
+  MapPin,
+  Wallet,
+  CheckCircle2,
+  XCircle,
+  Clock3,
+} from "lucide-react";
 import { riderApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
 import StatusPill from "../../components/StatusPill";
@@ -39,7 +47,9 @@ export default function RiderOrders() {
     setBusyId(order.id);
     try {
       await riderApi.updateStatus(order.id, next);
-      setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: next } : o)));
+      setOrders((prev) =>
+        prev.map((o) => (o.id === order.id ? { ...o, status: next } : o)),
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -54,8 +64,10 @@ export default function RiderOrders() {
           <Bike size={20} />
         </span>
         <div>
-          <h1 className="font-display text-3xl font-semibold">My deliveries</h1>
-          <p className="text-sm text-ink/60">Orders assigned to you, in progress order.</p>
+          <h1 className="font-sans text-3xl font-semibold">My deliveries</h1>
+          <p className="text-sm text-ink/60">
+            Orders assigned to you, in progress order.
+          </p>
         </div>
       </div>
 

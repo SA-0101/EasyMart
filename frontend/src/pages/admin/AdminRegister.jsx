@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { User, Mail, Lock, ShieldCheck, UserPlus, CheckCircle2 } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  ShieldCheck,
+  UserPlus,
+  CheckCircle2,
+} from "lucide-react";
 import { authApi } from "../../services/api";
 import ErrorBanner from "../../components/ErrorBanner";
 
@@ -32,24 +39,36 @@ export default function AdminRegister() {
           <ShieldCheck size={20} />
         </span>
         <div>
-          <h1 className="font-display text-2xl font-semibold sm:text-3xl">Register a new admin</h1>
-          <p className="text-sm text-ink/60">Only an existing admin can create another admin account.</p>
+          <h1 className="font-sans text-2xl font-semibold sm:text-3xl">
+            Register a new admin
+          </h1>
+          <p className="text-sm text-ink/60">
+            Only an existing admin can create another admin account.
+          </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="card mt-8 flex flex-col gap-4 p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="card mt-8 flex flex-col gap-4 p-6"
+      >
         <div>
           <label className="label" htmlFor="a-username">
             Username
           </label>
           <div className="relative">
-            <User size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <User
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="a-username"
               required
               className="field !pl-9"
               value={form.username}
-              onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, username: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -58,14 +77,19 @@ export default function AdminRegister() {
             Email
           </label>
           <div className="relative">
-            <Mail size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Mail
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="a-email"
               type="email"
               required
               className="field !pl-9"
               value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, email: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -74,7 +98,10 @@ export default function AdminRegister() {
             Password
           </label>
           <div className="relative">
-            <Lock size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <Lock
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="a-password"
               type="password"
@@ -82,7 +109,9 @@ export default function AdminRegister() {
               minLength={6}
               className="field !pl-9"
               value={form.password}
-              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, password: e.target.value }))
+              }
             />
           </div>
         </div>
@@ -100,7 +129,11 @@ export default function AdminRegister() {
           </p>
         )}
 
-        <button type="submit" disabled={submitting} className="btn-primary mt-2">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="btn-primary mt-2"
+        >
           <UserPlus size={16} />
           {submitting ? "Creating admin…" : "Create admin account"}
         </button>

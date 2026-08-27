@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Package, ImagePlus, PlusCircle, Save, X, Pencil, Trash2 } from "lucide-react";
+import {
+  Package,
+  ImagePlus,
+  PlusCircle,
+  Save,
+  X,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { productsApi, adminApi } from "../../services/api";
 import { imageUrl, formatPrice } from "../../services/format";
 import ErrorBanner from "../../components/ErrorBanner";
@@ -35,7 +43,12 @@ export default function AdminProducts() {
 
   const startEdit = (p) => {
     setEditingId(p.id);
-    setForm({ name: p.name, description: p.description, price: p.price, image: null });
+    setForm({
+      name: p.name,
+      description: p.description,
+      price: p.price,
+      image: null,
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -82,10 +95,13 @@ export default function AdminProducts() {
         <span className="grid h-11 w-11 place-items-center rounded-full bg-market-100 text-market-600">
           <Package size={20} />
         </span>
-        <h1 className="font-display text-3xl font-semibold">Manage products</h1>
+        <h1 className="font-sans text-3xl font-semibold">Manage products</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="card mt-6 grid gap-4 p-6 md:grid-cols-2">
+      <form
+        onSubmit={handleSubmit}
+        className="card mt-6 grid gap-4 p-6 md:grid-cols-2"
+      >
         <div>
           <label className="label" htmlFor="p-name">
             Name
@@ -121,7 +137,9 @@ export default function AdminProducts() {
             rows={2}
             className="field"
             value={form.description}
-            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, description: e.target.value }))
+            }
           />
         </div>
         <div className="md:col-span-2">
@@ -129,13 +147,18 @@ export default function AdminProducts() {
             Product image {editingId && "(leave empty to keep current image)"}
           </label>
           <div className="relative">
-            <ImagePlus size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <ImagePlus
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            />
             <input
               id="p-image"
               type="file"
               accept="image/*"
               className="field !pl-9 file:mr-3 file:rounded-full file:border-0 file:bg-market-100 file:px-3 file:py-1 file:text-xs file:font-semibold file:text-market-700"
-              onChange={(e) => setForm((f) => ({ ...f, image: e.target.files?.[0] || null }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, image: e.target.files?.[0] || null }))
+              }
             />
           </div>
         </div>
@@ -145,7 +168,11 @@ export default function AdminProducts() {
         <div className="flex gap-3 md:col-span-2">
           <button type="submit" disabled={submitting} className="btn-primary">
             {editingId ? <Save size={16} /> : <PlusCircle size={16} />}
-            {submitting ? "Saving…" : editingId ? "Update product" : "Add product"}
+            {submitting
+              ? "Saving…"
+              : editingId
+                ? "Update product"
+                : "Add product"}
           </button>
           {editingId && (
             <button type="button" onClick={resetForm} className="btn-secondary">
@@ -169,12 +196,26 @@ export default function AdminProducts() {
       ) : (
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {products.map((p) => (
-            <div key={p.id} className="card card-hover flex flex-col overflow-hidden">
-              <img src={imageUrl(p.image)} alt={p.name} className="h-32 w-full object-cover" />
+            <div
+              key={p.id}
+              className="card card-hover flex flex-col overflow-hidden"
+            >
+              <div className="relative aspect-square overflow-hidden bg-market-50">
+                <img
+                  src={imageUrl(p.image)}
+                  alt={p.name}
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute left-2.5 top-2.5 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-market-700 shadow-sm">
+                  {formatPrice(p.price)}
+                </span>
+              </div>
               <div className="flex flex-1 flex-col p-3">
-                <p className="truncate font-semibold">{p.name}</p>
-                <p className="text-sm text-market-600">{formatPrice(p.price)}</p>
-                <div className="mt-auto flex gap-2 pt-3">
+                <p className="line-clamp-1 font-semibold">{p.name}</p>
+                <p className="mt-1 line-clamp-2 flex-1 text-xs text-ink/60">
+                  {p.description}
+                </p>
+                <div className="mt-3 flex gap-2">
                   <button
                     onClick={() => startEdit(p)}
                     className="btn-secondary flex-1 !px-2 !py-1.5 text-xs"

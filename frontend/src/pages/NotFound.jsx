@@ -7,7 +7,9 @@ export default function NotFound() {
       <span className="grid h-16 w-16 place-items-center rounded-full bg-market-100 text-market-600">
         <Compass size={30} />
       </span>
-      <span className="mt-4 font-display text-5xl font-semibold text-market-600">404</span>
+      <span className="mt-4 font-sans text-5xl font-semibold text-market-600">
+        404
+      </span>
       <p className="mt-3 text-ink/70">This page isn't on the shelf.</p>
       <Link to="/" className="btn-primary mt-6">
         Back to Easy Mart

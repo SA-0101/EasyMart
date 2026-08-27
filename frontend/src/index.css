@@ -10,10 +10,6 @@ body {
   @apply bg-cream text-ink font-body antialiased;
 }
 
-h1, h2, h3, h4 {
-  @apply font-display;
-}
-
 ::selection {
   @apply bg-mango-300 text-ink;
 }
@@ -29,7 +25,9 @@ select:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -74,6 +72,10 @@ select:focus-visible {
 .awning-edge {
   height: 18px;
   width: 100%;
-  background:
-    radial-gradient(circle at 10px 0, transparent 10px, #2E6E3B 10.5px) 0 -1px / 20px 20px repeat-x;
+  background: radial-gradient(
+      circle at 10px 0,
+      transparent 10px,
+      #2e6e3b 10.5px
+    )
+    0 -1px / 20px 20px repeat-x;
 }

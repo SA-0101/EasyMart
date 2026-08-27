@@ -3,7 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Minus, Plus, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
 import { cartApi } from "../../services/api";
 import { imageUrl, formatPrice } from "../../services/format";
-import { groupCartItems, cartGrandTotal, setCartGroupQuantity } from "../../services/cart";
+import {
+  groupCartItems,
+  cartGrandTotal,
+  setCartGroupQuantity,
+} from "../../services/cart";
 import { DELIVERY_CHARGES } from "../../services/constants";
 import ErrorBanner from "../../components/ErrorBanner";
 import EmptyState from "../../components/EmptyState";
@@ -74,7 +78,7 @@ export default function Cart() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-3xl font-semibold">Your cart</h1>
+        <h1 className="font-sans text-3xl font-semibold">Your cart</h1>
         {groupedItems.length > 0 && (
           <button
             onClick={handleClear}
@@ -107,7 +111,10 @@ export default function Cart() {
               const itemTotal = group.price * group.quantity;
               const isBusy = busyKey === group.key;
               return (
-                <div key={group.key} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+                <div
+                  key={group.key}
+                  className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center"
+                >
                   <img
                     src={imageUrl(group.image)}
                     alt={group.name}
@@ -115,7 +122,9 @@ export default function Cart() {
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">{group.name}</p>
-                    <p className="text-xs text-ink/60">{formatPrice(group.price)} each</p>
+                    <p className="text-xs text-ink/60">
+                      {formatPrice(group.price)} each
+                    </p>
                   </div>
 
                   <div className="flex items-center justify-between gap-4 sm:justify-end">
@@ -123,7 +132,9 @@ export default function Cart() {
                       <button
                         type="button"
                         disabled={isBusy}
-                        onClick={() => handleQuantityChange(group, group.quantity - 1)}
+                        onClick={() =>
+                          handleQuantityChange(group, group.quantity - 1)
+                        }
                         className="grid h-8 w-8 place-items-center text-ink/60 transition-colors hover:text-market-700 disabled:opacity-40"
                         aria-label={`Decrease quantity of ${group.name}`}
                       >
@@ -135,7 +146,9 @@ export default function Cart() {
                       <button
                         type="button"
                         disabled={isBusy}
-                        onClick={() => handleQuantityChange(group, group.quantity + 1)}
+                        onClick={() =>
+                          handleQuantityChange(group, group.quantity + 1)
+                        }
                         className="grid h-8 w-8 place-items-center text-ink/60 transition-colors hover:text-market-700 disabled:opacity-40"
                         aria-label={`Increase quantity of ${group.name}`}
                       >
@@ -173,9 +186,14 @@ export default function Cart() {
             <div className="flex items-center justify-between border-t border-market-100 pt-3">
               <div>
                 <p className="text-sm text-ink/60">Total Amount</p>
-                <p className="text-xl font-semibold">{formatPrice(totalAmount)}</p>
+                <p className="text-xl font-semibold">
+                  {formatPrice(totalAmount)}
+                </p>
               </div>
-              <button onClick={() => navigate("/customer/checkout")} className="btn-primary">
+              <button
+                onClick={() => navigate("/customer/checkout")}
+                className="btn-primary"
+              >
                 Checkout <ArrowRight size={16} />
               </button>
             </div>
