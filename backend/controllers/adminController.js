@@ -3,12 +3,12 @@ const bcrypt = require("bcrypt");
 
 const createProduct = async (req, res, next) => {
   try {
-    const image = req.file.path;
+    const image = req.file?.path || null;
     const { name, description, price } = req.body;
 
     const result = await pool.query(
       "INSERT INTO products (name,description,image,price) VALUES($1,$2,$3,$4) RETURNING *",
-      [name, description, image, price],
+      [name, description, image || "", price],
     );
     res.status(200).json(result.rows[0]);
   } catch (err) {
@@ -35,7 +35,7 @@ const getProducts = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const image = req.file.path;
+    const image = req.file?.path || null;
     const { name, description, price } = req.body;
     const result = await pool.query(
       "UPDATE products SET name=COALESCE($1,name),description=COALESCE($2,description),image=COALESCE($3,image),price=COALESCE($4,price) WHERE id=$5 RETURNING *",

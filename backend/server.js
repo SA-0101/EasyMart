@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { getUsers } = require("./controllers/userController");
 const error_middleware = require("./middlewares/error-middleware");
-
+const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const cartRoutes = require("./routes/cartRoutes");
@@ -21,6 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsFunc()));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //User APIs
 app.use("/api/users", token_auth, userRoutes);
