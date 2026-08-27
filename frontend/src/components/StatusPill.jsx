@@ -9,7 +9,24 @@ const STYLES = {
   cancelled: "bg-red-100 text-red-700",
 };
 
+const DOT_STYLES = {
+  pending: "bg-mango-500",
+  confirmed: "bg-amber-500",
+  packed: "bg-sky-500",
+  shipped: "bg-indigo-500",
+  "out for delivery": "bg-purple-500",
+  delivered: "bg-market-500",
+  cancel: "bg-red-500",
+  cancelled: "bg-red-500",
+};
+
 export default function StatusPill({ status }) {
   const style = STYLES[status] || "bg-ink/10 text-ink/70";
-  return <span className={`pill ${style}`}>{status}</span>;
+  const dot = DOT_STYLES[status] || "bg-ink/40";
+  return (
+    <span className={`pill ${style}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+      {status}
+    </span>
+  );
 }

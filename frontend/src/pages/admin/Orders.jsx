@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import { ClipboardList, MapPin, Lock, Bike } from "lucide-react";
 import { adminApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
 import { orderBreakdown } from "../../services/orders";
 import StatusPill from "../../components/StatusPill";
+import ErrorBanner from "../../components/ErrorBanner";
+import EmptyState from "../../components/EmptyState";
+import { ListSkeleton } from "../../components/Skeletons";
 
 // Admin may only move an order between these statuses. Once a rider has
 // taken it further (shipped / out for delivery / delivered), or it has
@@ -62,14 +66,26 @@ export default function AdminOrders() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold">All orders</h1>
+      <div className="flex items-center gap-3">
+        <span className="grid h-11 w-11 place-items-center rounded-full bg-market-100 text-market-600">
+          <ClipboardList size={20} />
+        </span>
+        <h1 className="font-display text-3xl font-semibold">All orders</h1>
+      </div>
 
-      {error && <p className="mt-4 text-sm font-medium text-red-600">{error}</p>}
+      {error && <ErrorBanner message={error} className="mt-4" />}
 
       {loading ? (
-        <p className="mt-6 text-ink/60">Loading orders…</p>
+        <div className="mt-6">
+          <ListSkeleton />
+        </div>
       ) : orders.length === 0 ? (
-        <p className="mt-6 text-ink/60">No orders yet.</p>
+        <EmptyState
+          icon={ClipboardList}
+          title="No orders yet"
+          message="Orders placed by customers will show up here."
+          className="mt-6"
+        />
       ) : (
         <div className="mt-6 flex flex-col gap-4">
           {orders.map((order) => {
@@ -79,14 +95,16 @@ export default function AdminOrders() {
             const adminCanEditStatus = !isRiderOwned && !isCancelled;
 
             return (
-              <div key={order.id} className="card p-5">
+              <div key={order.id} className="card card-hover p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="font-semibold">
                       Order #{order.id} — {order.name}
                     </p>
                     <p className="text-xs text-ink/60">{order.contact}</p>
-                    <p className="text-xs text-ink/60">{order.address}</p>
+                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ink/60">
+                      <MapPin size={12} /> {order.address}
+                    </p>
                   </div>
                   <StatusPill status={order.status} />
                 </div>
@@ -137,15 +155,16 @@ export default function AdminOrders() {
                           ))}
                         </select>
                       ) : (
-                        <span className="text-xs text-ink/50">
+                        <span className="flex items-center gap-1 text-xs text-ink/50">
+                          <Lock size={12} />
                           {isCancelled ? "Cancelled — locked" : "With rider — locked"}
                         </span>
                       )}
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <label className="text-xs font-semibold uppercase text-ink/50">
-                        Assign rider
+                      <label className="flex items-center gap-1 text-xs font-semibold uppercase text-ink/50">
+                        <Bike size={13} /> Assign rider
                       </label>
                       <select
                         className="field !w-auto !py-1.5 text-sm"

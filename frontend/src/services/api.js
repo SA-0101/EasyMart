@@ -53,7 +53,13 @@ async function refreshAccessToken() {
  */
 export async function request(
   path,
-  { method = "GET", body, auth = false, credentials = false, isFormData = false } = {}
+  {
+    method = "GET",
+    body,
+    auth = false,
+    credentials = false,
+    isFormData = false,
+  } = {},
 ) {
   const doFetch = async () => {
     const headers = {};
@@ -98,7 +104,9 @@ export async function request(
   }
 
   if (!res.ok) {
-    const message = (data && (data.message || data.error)) || `Request failed (${res.status})`;
+    const message =
+      (data && (data.message || data.error)) ||
+      `Request failed (${res.status})`;
     throw new ApiError(message, res.status, data);
   }
 
@@ -115,9 +123,14 @@ export class ApiError extends Error {
 
 // ---------- Auth ----------
 export const authApi = {
-  register: (payload) => request("/api/register", { method: "POST", body: payload }),
+  register: (payload) =>
+    request("/api/register", { method: "POST", body: payload }),
   registerAdmin: (payload) =>
-    request("/api/admin/register", { method: "POST", body: payload, auth: true }),
+    request("/api/admin/register", {
+      method: "POST",
+      body: payload,
+      auth: true,
+    }),
   login: (payload) =>
     request("/api/login", { method: "POST", body: payload, credentials: true }),
   refresh: () => request("/api/refresh", { credentials: true }),
@@ -128,21 +141,27 @@ export const authApi = {
 export const productsApi = {
   getAll: () => request("/api/products"),
   getDetails: (id) => request(`/api/products/details/${id}`),
-  filter: (name) => request(`/api/products/filter?name=${encodeURIComponent(name)}`),
+  filter: (name) =>
+    request(`/api/products/filter?name=${encodeURIComponent(name)}`),
 };
 
 // ---------- Customer: Cart ----------
 export const cartApi = {
   view: () => request("/api/cart/products", { auth: true }),
-  add: (item) => request("/api/cart/products", { method: "POST", body: item, auth: true }),
+  add: (item) =>
+    request("/api/cart/products", { method: "POST", body: item, auth: true }),
   remove: (cartItemId) =>
-    request(`/api/cart/products/${cartItemId}`, { method: "DELETE", auth: true }),
+    request(`/api/cart/products/${cartItemId}`, {
+      method: "DELETE",
+      auth: true,
+    }),
   clear: () => request("/api/cart/products", { method: "DELETE", auth: true }),
 };
 
 // ---------- Customer: Orders ----------
 export const ordersApi = {
-  place: (payload) => request("/api/orders", { method: "POST", body: payload, auth: true }),
+  place: (payload) =>
+    request("/api/orders", { method: "POST", body: payload, auth: true }),
   getMine: () => request("/api/orders", { auth: true }),
   cancel: (id) => request(`/api/orders/${id}`, { method: "PATCH", auth: true }),
 };
@@ -169,15 +188,27 @@ export const adminApi = {
   getAllOrders: () => request("/api/admin/orders", { auth: true }),
   getOrder: (id) => request(`/api/admin/orders/${id}`, { auth: true }),
   updateOrderStatus: (id, status) =>
-    request("/api/admin/orders/status", { method: "PATCH", body: { id, status }, auth: true }),
+    request("/api/admin/orders/status", {
+      method: "PATCH",
+      body: { id, status },
+      auth: true,
+    }),
   getRiders: () => request("/api/admin/riders", { auth: true }),
   assignRider: (order_id, rider_id) =>
-    request("/api/admin/riders", { method: "PATCH", body: { order_id, rider_id }, auth: true }),
+    request("/api/admin/riders", {
+      method: "PATCH",
+      body: { order_id, rider_id },
+      auth: true,
+    }),
 };
 
 // ---------- Rider ----------
 export const riderApi = {
   getAssignedOrders: () => request("/api/riders/orders", { auth: true }),
   updateStatus: (id, status) =>
-    request("/api/riders/status", { method: "PATCH", body: { id, status }, auth: true }),
+    request("/api/riders/status", {
+      method: "PATCH",
+      body: { id, status },
+      auth: true,
+    }),
 };

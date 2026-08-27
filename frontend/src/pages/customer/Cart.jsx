@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Minus, Plus, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
 import { cartApi } from "../../services/api";
 import { imageUrl, formatPrice } from "../../services/format";
-import { groupCartItems, cartGrandTotal } from "../../services/cart";
+import { groupCartItems, cartGrandTotal, setCartGroupQuantity } from "../../services/cart";
 import { DELIVERY_CHARGES } from "../../services/constants";
+import ErrorBanner from "../../components/ErrorBanner";
+import EmptyState from "../../components/EmptyState";
+import Spinner from "../../components/Spinner";
 
 export default function Cart() {
   const [items, setItems] = useState([]);
@@ -25,12 +29,24 @@ export default function Cart() {
 
   const groupedItems = groupCartItems(items);
 
+  const handleQuantityChange = async (group, nextQuantity) => {
+    setBusyKey(group.key);
+    setError("");
+    try {
+      await setCartGroupQuantity(group, nextQuantity);
+      load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusyKey(null);
+    }
+  };
+
   const handleRemove = async (group) => {
     setBusyKey(group.key);
+    setError("");
     try {
-      // Remove every underlying cart row for this product so the combined
-      // card fully disappears.
-      await Promise.all(group.ids.map((id) => cartApi.remove(id)));
+      await setCartGroupQuantity(group, 0);
       setItems((prev) => prev.filter((i) => !group.ids.includes(i.id)));
     } catch (err) {
       setError(err.message);
@@ -60,30 +76,38 @@ export default function Cart() {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="font-display text-3xl font-semibold">Your cart</h1>
         {groupedItems.length > 0 && (
-          <button onClick={handleClear} className="text-sm font-semibold text-red-600 hover:underline">
-            Clear cart
+          <button
+            onClick={handleClear}
+            className="flex items-center gap-1 text-sm font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
+          >
+            <Trash2 size={15} /> Clear cart
           </button>
         )}
       </div>
 
-      {error && <p className="mb-4 text-sm font-medium text-red-600">{error}</p>}
+      {error && <ErrorBanner message={error} className="mb-4" />}
 
       {loading ? (
-        <p className="text-ink/60">Loading cart…</p>
+        <Spinner label="Loading cart…" />
       ) : groupedItems.length === 0 ? (
-        <div className="card p-10 text-center">
-          <p className="text-ink/60">Your cart is empty.</p>
-          <Link to="/customer/products" className="btn-primary mt-4 inline-flex">
-            Browse products
-          </Link>
-        </div>
+        <EmptyState
+          icon={ShoppingCart}
+          title="Your cart is empty"
+          message="Add a few essentials to get started."
+          action={
+            <Link to="/customer/products" className="btn-primary mt-1">
+              Browse products
+            </Link>
+          }
+        />
       ) : (
         <div className="flex flex-col gap-6">
           <div className="card divide-y divide-market-100">
             {groupedItems.map((group) => {
               const itemTotal = group.price * group.quantity;
+              const isBusy = busyKey === group.key;
               return (
-                <div key={group.key} className="flex items-center gap-4 p-4">
+                <div key={group.key} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
                   <img
                     src={imageUrl(group.image)}
                     alt={group.name}
@@ -91,18 +115,47 @@ export default function Cart() {
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">{group.name}</p>
-                    <p className="text-xs text-ink/60">
-                      {formatPrice(group.price)} × {group.quantity}
-                    </p>
+                    <p className="text-xs text-ink/60">{formatPrice(group.price)} each</p>
                   </div>
-                  <p className="font-semibold text-market-600">{formatPrice(itemTotal)}</p>
-                  <button
-                    onClick={() => handleRemove(group)}
-                    disabled={busyKey === group.key}
-                    className="btn-danger !px-3 !py-1.5 text-xs"
-                  >
-                    {busyKey === group.key ? "…" : "Remove"}
-                  </button>
+
+                  <div className="flex items-center justify-between gap-4 sm:justify-end">
+                    <div className="flex items-center rounded-full border border-market-200 bg-white">
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => handleQuantityChange(group, group.quantity - 1)}
+                        className="grid h-8 w-8 place-items-center text-ink/60 transition-colors hover:text-market-700 disabled:opacity-40"
+                        aria-label={`Decrease quantity of ${group.name}`}
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className="w-7 text-center text-sm font-semibold">
+                        {group.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => handleQuantityChange(group, group.quantity + 1)}
+                        className="grid h-8 w-8 place-items-center text-ink/60 transition-colors hover:text-market-700 disabled:opacity-40"
+                        aria-label={`Increase quantity of ${group.name}`}
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+
+                    <p className="w-24 shrink-0 text-right font-semibold text-market-600">
+                      {formatPrice(itemTotal)}
+                    </p>
+
+                    <button
+                      onClick={() => handleRemove(group)}
+                      disabled={isBusy}
+                      className="btn-icon"
+                      aria-label={`Remove ${group.name}`}
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
                 </div>
               );
             })}
@@ -123,7 +176,7 @@ export default function Cart() {
                 <p className="text-xl font-semibold">{formatPrice(totalAmount)}</p>
               </div>
               <button onClick={() => navigate("/customer/checkout")} className="btn-primary">
-                Checkout
+                Checkout <ArrowRight size={16} />
               </button>
             </div>
           </div>

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
+import { Bike } from "lucide-react";
 import { adminApi } from "../../services/api";
+import ErrorBanner from "../../components/ErrorBanner";
+import EmptyState from "../../components/EmptyState";
+import { ListSkeleton } from "../../components/Skeletons";
 
 export default function AdminRiders() {
   const [riders, setRiders] = useState([]);
@@ -16,21 +20,33 @@ export default function AdminRiders() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold">Riders</h1>
-      <p className="mt-1 text-sm text-ink/60">
-        Riders can be assigned to orders from the Orders page.
-      </p>
+      <div className="flex items-center gap-3">
+        <span className="grid h-11 w-11 place-items-center rounded-full bg-indigo-100 text-indigo-600">
+          <Bike size={20} />
+        </span>
+        <div>
+          <h1 className="font-display text-3xl font-semibold">Riders</h1>
+          <p className="text-sm text-ink/60">Riders can be assigned to orders from the Orders page.</p>
+        </div>
+      </div>
 
-      {error && <p className="mt-4 text-sm font-medium text-red-600">{error}</p>}
+      {error && <ErrorBanner message={error} className="mt-4" />}
 
       {loading ? (
-        <p className="mt-6 text-ink/60">Loading riders…</p>
+        <div className="mt-6">
+          <ListSkeleton count={2} />
+        </div>
       ) : riders.length === 0 ? (
-        <p className="mt-6 text-ink/60">No riders have registered yet.</p>
+        <EmptyState
+          icon={Bike}
+          title="No riders yet"
+          message="Once riders register, they'll show up here."
+          className="mt-6"
+        />
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {riders.map((r) => (
-            <div key={r.id} className="card flex items-center gap-4 p-4">
+            <div key={r.id} className="card card-hover flex items-center gap-4 p-4">
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-indigo-100 font-display text-lg font-semibold text-indigo-700">
                 {r.username?.[0]?.toUpperCase() || "R"}
               </span>

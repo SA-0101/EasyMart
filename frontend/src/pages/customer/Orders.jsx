@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import { ClipboardList, Phone, MapPin, Wallet, X } from "lucide-react";
 import { ordersApi } from "../../services/api";
 import { formatPrice } from "../../services/format";
 import { orderBreakdown } from "../../services/orders";
 import StatusPill from "../../components/StatusPill";
+import ErrorBanner from "../../components/ErrorBanner";
+import EmptyState from "../../components/EmptyState";
+import { ListSkeleton } from "../../components/Skeletons";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -37,27 +41,38 @@ export default function Orders() {
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <h1 className="font-display text-3xl font-semibold">My orders</h1>
 
-      {error && <p className="mt-4 text-sm font-medium text-red-600">{error}</p>}
+      {error && <ErrorBanner message={error} className="mt-4" />}
 
       {loading ? (
-        <p className="mt-6 text-ink/60">Loading orders…</p>
+        <div className="mt-6">
+          <ListSkeleton />
+        </div>
       ) : orders.length === 0 ? (
-        <p className="mt-6 text-ink/60">You haven't placed any orders yet.</p>
+        <EmptyState
+          icon={ClipboardList}
+          title="No orders yet"
+          message="Once you place an order, you'll be able to track it here."
+          action={undefined}
+        />
       ) : (
         <div className="mt-6 flex flex-col gap-4">
           {orders.map((order) => {
             const { subtotal, deliveryCharges, total } = orderBreakdown(order);
             return (
-              <div key={order.id} className="card p-5">
+              <div key={order.id} className="card card-hover p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="font-semibold">
                       Order #{order.id} — {order.name}
                     </p>
-                    <p className="text-xs text-ink/60">{order.contact}</p>
-                    <p className="text-xs text-ink/60">{order.address}</p>
-                    <p className="mt-1 text-xs font-medium text-ink/70">
-                      Payment: {order.payment_method}
+                    <p className="mt-1 flex items-center gap-1.5 text-xs text-ink/60">
+                      <Phone size={12} /> {order.contact}
+                    </p>
+                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ink/60">
+                      <MapPin size={12} /> {order.address}
+                    </p>
+                    <p className="mt-1 flex items-center gap-1.5 text-xs font-medium text-ink/70">
+                      <Wallet size={12} /> {order.payment_method}
                     </p>
                   </div>
                   <StatusPill status={order.status} />
@@ -76,7 +91,7 @@ export default function Orders() {
                   </div>
                 )}
 
-                <div className="mt-4 flex items-center justify-between border-t border-market-100 pt-3">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-market-100 pt-3">
                   <div className="space-y-0.5 text-xs text-ink/60">
                     <p>
                       Subtotal: <span className="text-ink/80">{formatPrice(subtotal)}</span>
@@ -95,7 +110,7 @@ export default function Orders() {
                       disabled={busyId === order.id}
                       className="btn-danger !px-4 !py-1.5 text-xs"
                     >
-                      {busyId === order.id ? "Cancelling…" : "Cancel order"}
+                      <X size={13} /> {busyId === order.id ? "Cancelling…" : "Cancel order"}
                     </button>
                   )}
                 </div>

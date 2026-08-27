@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { productsApi, cartApi } from "../../services/api";
+import { ArrowLeft, Minus, Plus, ShoppingBag, Check } from "lucide-react";
+import { productsApi } from "../../services/api";
+import { addToCartMerged } from "../../services/cart";
 import { imageUrl, formatPrice } from "../../services/format";
 import { useAuth } from "../../context/AuthContext";
+import ErrorBanner from "../../components/ErrorBanner";
+import Spinner from "../../components/Spinner";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -34,14 +38,7 @@ export default function ProductDetails() {
     setAdding(true);
     setAdded(false);
     try {
-      await cartApi.add({
-        product_id: product.id,
-        name: product.name,
-        description: product.description,
-        image: product.image,
-        price: product.price,
-        quantity,
-      });
+      await addToCartMerged(product, quantity);
       setAdded(true);
     } catch (err) {
       setError(err.message);
@@ -51,15 +48,19 @@ export default function ProductDetails() {
   };
 
   if (loading) {
-    return <p className="mx-auto max-w-4xl px-4 py-10 text-ink/60 sm:px-6">Loading product…</p>;
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+        <Spinner label="Loading product…" />
+      </div>
+    );
   }
 
   if (error && !product) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-        <p className="text-sm font-medium text-red-600">{error}</p>
+        <ErrorBanner message={error} />
         <button onClick={() => navigate(-1)} className="btn-secondary mt-4">
-          Go back
+          <ArrowLeft size={16} /> Go back
         </button>
       </div>
     );
@@ -69,8 +70,11 @@ export default function ProductDetails() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <Link to="/customer/products" className="text-sm font-semibold text-market-600 hover:underline">
-        ← Back to shop
+      <Link
+        to="/customer/products"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-market-600 transition-colors hover:text-market-700 hover:underline"
+      >
+        <ArrowLeft size={16} /> Back to shop
       </Link>
 
       <div className="card mt-4 grid gap-8 p-6 md:grid-cols-2">
@@ -90,31 +94,38 @@ export default function ProductDetails() {
             <label className="label mb-0" htmlFor="qty">
               Qty
             </label>
-            <div className="flex items-center rounded-full border border-market-200">
+            <div className="flex items-center rounded-full border border-market-200 bg-white">
               <button
                 type="button"
-                className="px-3 py-1.5 text-lg"
+                className="grid h-9 w-9 place-items-center text-ink/60 transition-colors hover:text-market-700"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                aria-label="Decrease quantity"
               >
-                −
+                <Minus size={15} />
               </button>
-              <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
+              <span id="qty" className="w-8 text-center text-sm font-semibold">
+                {quantity}
+              </span>
               <button
                 type="button"
-                className="px-3 py-1.5 text-lg"
+                className="grid h-9 w-9 place-items-center text-ink/60 transition-colors hover:text-market-700"
                 onClick={() => setQuantity((q) => q + 1)}
+                aria-label="Increase quantity"
               >
-                +
+                <Plus size={15} />
               </button>
             </div>
           </div>
 
-          {error && <p className="mt-3 text-sm font-medium text-red-600">{error}</p>}
+          {error && <ErrorBanner message={error} className="mt-3" />}
           {added && (
-            <p className="mt-3 text-sm font-medium text-market-600">Added to your cart.</p>
+            <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-market-600">
+              <Check size={16} /> Added to your cart.
+            </p>
           )}
 
           <button onClick={handleAddToCart} disabled={adding} className="btn-primary mt-6 w-fit">
+            <ShoppingBag size={16} />
             {adding ? "Adding…" : "Add to cart"}
           </button>
         </div>

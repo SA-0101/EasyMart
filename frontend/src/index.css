@@ -18,29 +18,62 @@ h1, h2, h3, h4 {
   @apply bg-mango-300 text-ink;
 }
 
+/* Keyboard focus stays visible everywhere, even where Tailwind's default
+   outline was reset by focus:outline-none on .field. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  @apply outline-none ring-2 ring-market-400 ring-offset-2 ring-offset-cream;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-market-600 px-5 py-2.5 text-sm font-semibold text-cream transition hover:bg-market-700 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-market-600 px-5 py-2.5 text-sm font-semibold text-cream shadow-sm shadow-market-600/20 transition-all duration-150 hover:-translate-y-0.5 hover:bg-market-700 hover:shadow-md hover:shadow-market-600/25 active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-market-600 bg-transparent px-5 py-2.5 text-sm font-semibold text-market-700 transition hover:bg-market-50 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-market-300 bg-white px-5 py-2.5 text-sm font-semibold text-market-700 transition-all duration-150 hover:-translate-y-0.5 hover:border-market-500 hover:bg-market-50 active:translate-y-0 disabled:pointer-events-none disabled:opacity-50;
   }
   .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-all duration-150 hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-md active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none;
   }
   .btn-mango {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-mango-400 px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-mango-500 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-mango-400 px-5 py-2.5 text-sm font-semibold text-ink shadow-sm shadow-mango-500/25 transition-all duration-150 hover:-translate-y-0.5 hover:bg-mango-500 hover:shadow-md active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none;
+  }
+  .btn-icon {
+    @apply grid h-9 w-9 shrink-0 place-items-center rounded-full border border-market-200 bg-white text-ink/70 transition-all duration-150 hover:border-market-400 hover:bg-market-50 hover:text-market-700 disabled:pointer-events-none disabled:opacity-40;
   }
   .field {
-    @apply w-full rounded-xl border border-market-200 bg-white px-4 py-2.5 text-sm text-ink placeholder:text-ink/40 focus:border-market-500 focus:outline-none focus:ring-2 focus:ring-market-100;
+    @apply w-full rounded-xl border border-market-200 bg-white px-4 py-2.5 text-sm text-ink placeholder:text-ink/40 transition-colors duration-150 focus:border-market-500 focus:outline-none focus:ring-2 focus:ring-market-100;
   }
   .card {
-    @apply rounded-xl2 border border-market-100 bg-white shadow-sm;
+    @apply rounded-xl2 border border-market-100 bg-white shadow-sm shadow-ink/[0.03] transition-shadow duration-200;
+  }
+  .card-hover {
+    @apply hover:-translate-y-0.5 hover:shadow-lg hover:shadow-market-900/[0.06];
   }
   .label {
     @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-market-700/70;
   }
   .pill {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide;
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide;
   }
+}
+
+/* Signature brand element: a scalloped "awning" edge, evoking a market
+   stall canopy. Used as a divider under the landing hero. */
+.awning-edge {
+  height: 18px;
+  width: 100%;
+  background:
+    radial-gradient(circle at 10px 0, transparent 10px, #2E6E3B 10.5px) 0 -1px / 20px 20px repeat-x;
 }

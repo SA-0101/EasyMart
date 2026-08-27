@@ -104,6 +104,28 @@ The app expects the backend to be running at `http://localhost:3000`
   (copied into `public/`) instead of the text/circle logo. Layout and
   sizing preserved.
 
+## Change log (v3 request — logo, cart merge, UI overhaul)
+
+- **New original logo.** `public/easy-mart-icon.svg` is a hand-built
+  basket-and-sprout mark (not a copy of any reference image), paired with
+  an "Easy"/"Mart" wordmark in Baloo 2 via the reusable `src/components/Logo.jsx`.
+  Used in the navbar, the browser favicon, and the Login/Register headers.
+- **Cart duplicates actually merge now**, not just visually. `src/services/cart.js`
+  adds `addToCartMerged()` and `setCartGroupQuantity()`: since the backend
+  only exposes add/remove/clear (no "set quantity" endpoint), these delete
+  whatever row(s) already exist for a product and re-add a single row with
+  the combined quantity — so repeated "Add to cart" clicks, and the new
+  +/− steppers on the Cart page, keep the cart at one row per product no
+  matter what. `groupCartItems()` is kept as a display-safety-net on top of
+  that for any old duplicate rows already sitting in a cart.
+- **Full visual pass** across every page: new shared `Spinner`,
+  `ErrorBanner`, `EmptyState`, and skeleton-loading components for
+  consistent loading/error/empty treatment; `lucide-react` icons throughout
+  (nav, buttons, form fields, statuses); richer button states (lift +
+  shadow on hover, scale on press); product/card hover-lift and image
+  zoom; a signature scalloped "awning-edge" divider under the landing
+  hero; visible focus rings and reduced-motion support.
+
 ## Notes / assumptions made
 
 - **Delivery charge** is hard-coded to `200` at checkout (matching the

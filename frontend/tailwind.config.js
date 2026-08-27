@@ -31,6 +31,7 @@ export default {
       fontFamily: {
         display: ["'Fraunces'", "serif"],
         body: ["'Inter'", "sans-serif"],
+        logo: ["'Baloo 2'", "'Fraunces'", "serif"],
       },
       borderRadius: {
         xl2: "1.25rem",

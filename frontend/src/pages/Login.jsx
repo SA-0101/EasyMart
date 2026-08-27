@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Mail, Lock, LogIn, Info } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import Logo from "../components/Logo";
+import ErrorBanner from "../components/ErrorBanner";
 
 const ROLES = ["customer", "rider", "admin"];
 
@@ -33,12 +36,16 @@ export default function Login() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold">Welcome back</h1>
-      <p className="mt-1 text-sm text-ink/60">Log in to continue to Easy Mart.</p>
+      <div className="flex justify-center">
+        <Logo iconClassName="h-12 w-12" />
+      </div>
+      <h1 className="mt-6 text-center font-display text-3xl font-semibold">Welcome back</h1>
+      <p className="mt-1 text-center text-sm text-ink/60">Log in to continue to Easy Mart.</p>
 
       {infoMessage && (
-        <div className="mt-4 rounded-xl bg-mango-100 px-4 py-3 text-sm font-medium text-mango-600">
-          {infoMessage}
+        <div className="mt-4 flex items-start gap-2 rounded-xl bg-mango-100 px-4 py-3 text-sm font-medium text-mango-600">
+          <Info size={16} className="mt-0.5 shrink-0" />
+          <span>{infoMessage}</span>
         </div>
       )}
 
@@ -51,10 +58,10 @@ export default function Login() {
                 type="button"
                 key={r}
                 onClick={() => setForm((f) => ({ ...f, role: r }))}
-                className={`rounded-xl border px-3 py-2 text-sm font-semibold capitalize transition ${
+                className={`rounded-xl border px-3 py-2 text-sm font-semibold capitalize transition-all duration-150 ${
                   form.role === r
-                    ? "border-market-600 bg-market-600 text-cream"
-                    : "border-market-200 text-ink/70 hover:border-market-400"
+                    ? "border-market-600 bg-market-600 text-cream shadow-sm shadow-market-600/25"
+                    : "border-market-200 text-ink/70 hover:border-market-400 hover:bg-market-50"
                 }`}
               >
                 {r}
@@ -67,35 +74,42 @@ export default function Login() {
           <label className="label" htmlFor="email">
             Email
           </label>
-          <input
-            id="email"
-            type="email"
-            required
-            className="field"
-            placeholder="you@example.com"
-            value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-          />
+          <div className="relative">
+            <Mail size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <input
+              id="email"
+              type="email"
+              required
+              className="field !pl-9"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+            />
+          </div>
         </div>
 
         <div>
           <label className="label" htmlFor="password">
             Password
           </label>
-          <input
-            id="password"
-            type="password"
-            required
-            className="field"
-            placeholder="••••••••"
-            value={form.password}
-            onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-          />
+          <div className="relative">
+            <Lock size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <input
+              id="password"
+              type="password"
+              required
+              className="field !pl-9"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+            />
+          </div>
         </div>
 
-        {error && <p className="text-sm font-medium text-red-600">{error}</p>}
+        {error && <ErrorBanner message={error} />}
 
         <button type="submit" disabled={submitting} className="btn-primary mt-2">
+          <LogIn size={16} />
           {submitting ? "Logging in…" : "Log in"}
         </button>
       </form>

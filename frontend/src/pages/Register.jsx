@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { User, Mail, Lock, UserPlus, CheckCircle2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import Logo from "../components/Logo";
+import ErrorBanner from "../components/ErrorBanner";
 
 // Admin registration requires an already-authenticated admin per the API
 // spec, so public sign-up only offers customer / rider.
@@ -31,8 +34,11 @@ export default function Register() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold">Create your account</h1>
-      <p className="mt-1 text-sm text-ink/60">
+      <div className="flex justify-center">
+        <Logo iconClassName="h-12 w-12" />
+      </div>
+      <h1 className="mt-6 text-center font-display text-3xl font-semibold">Create your account</h1>
+      <p className="mt-1 text-center text-sm text-ink/60">
         Sign up as a customer to shop, or as a rider to deliver.
       </p>
 
@@ -45,10 +51,10 @@ export default function Register() {
                 type="button"
                 key={r}
                 onClick={() => setForm((f) => ({ ...f, role: r }))}
-                className={`rounded-xl border px-3 py-2 text-sm font-semibold capitalize transition ${
+                className={`rounded-xl border px-3 py-2 text-sm font-semibold capitalize transition-all duration-150 ${
                   form.role === r
-                    ? "border-market-600 bg-market-600 text-cream"
-                    : "border-market-200 text-ink/70 hover:border-market-400"
+                    ? "border-market-600 bg-market-600 text-cream shadow-sm shadow-market-600/25"
+                    : "border-market-200 text-ink/70 hover:border-market-400 hover:bg-market-50"
                 }`}
               >
                 {r}
@@ -61,55 +67,65 @@ export default function Register() {
           <label className="label" htmlFor="username">
             Username
           </label>
-          <input
-            id="username"
-            required
-            className="field"
-            placeholder="Your name"
-            value={form.username}
-            onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
-          />
+          <div className="relative">
+            <User size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <input
+              id="username"
+              required
+              className="field !pl-9"
+              placeholder="Your name"
+              value={form.username}
+              onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
+            />
+          </div>
         </div>
 
         <div>
           <label className="label" htmlFor="email">
             Email
           </label>
-          <input
-            id="email"
-            type="email"
-            required
-            className="field"
-            placeholder="you@example.com"
-            value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-          />
+          <div className="relative">
+            <Mail size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <input
+              id="email"
+              type="email"
+              required
+              className="field !pl-9"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+            />
+          </div>
         </div>
 
         <div>
           <label className="label" htmlFor="password">
             Password
           </label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={6}
-            className="field"
-            placeholder="At least 6 characters"
-            value={form.password}
-            onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-          />
+          <div className="relative">
+            <Lock size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
+            <input
+              id="password"
+              type="password"
+              required
+              minLength={6}
+              className="field !pl-9"
+              placeholder="At least 6 characters"
+              value={form.password}
+              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+            />
+          </div>
         </div>
 
-        {error && <p className="text-sm font-medium text-red-600">{error}</p>}
+        {error && <ErrorBanner message={error} />}
         {success && (
-          <p className="text-sm font-medium text-market-600">
-            Account created! Redirecting to login…
+          <p className="flex items-center gap-1.5 text-sm font-medium text-market-600">
+            <CheckCircle2 size={16} /> Account created! Redirecting to login…
           </p>
         )}
 
         <button type="submit" disabled={submitting} className="btn-primary mt-2">
+          <UserPlus size={16} />
           {submitting ? "Creating account…" : "Sign up"}
         </button>
       </form>
